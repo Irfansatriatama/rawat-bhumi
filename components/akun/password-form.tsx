@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Loader2, Eye, EyeOff } from "lucide-react";
+import { Check, Eye, EyeOff } from "lucide-react";
+import { Spinner } from "@/components/ui/loading";
 import { authClient } from "@/lib/auth-client";
 
 const field = "w-full rounded-xl border border-brand-dark/10 bg-white px-3.5 py-3 pr-11 text-sm text-brand-dark outline-none focus:border-brand-600";
@@ -76,7 +77,7 @@ export function PasswordForm() {
         disabled={state === "saving"}
         className="press flex w-full items-center justify-center gap-1.5 rounded-xl bg-brand-dark py-3.5 text-sm font-semibold text-white disabled:opacity-60"
       >
-        {state === "saving" && <Loader2 size={16} className="animate-spin" />}
+        {state === "saving" && <Spinner size={16} />}
         {state === "done" && <Check size={16} strokeWidth={3} />}
         {state === "done" ? "Password diperbarui" : state === "saving" ? "Menyimpan…" : "Ubah password"}
       </button>

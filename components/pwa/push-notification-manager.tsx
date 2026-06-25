@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { subscribeUser, unsubscribeUser } from "@/app/actions";
+import { Spinner } from "@/components/ui/loading";
 
 function urlBase64ToUint8Array(base64String: string) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -15,6 +16,7 @@ function urlBase64ToUint8Array(base64String: string) {
 export function PushNotificationManager() {
   const [isSupported, setIsSupported] = useState(false);
   const [subscription, setSubscription] = useState<PushSubscription | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     if ("serviceWorker" in navigator && "PushManager" in window) {
@@ -51,8 +53,22 @@ export function PushNotificationManager() {
   if (!isSupported) return <p>Push notification tidak didukung di browser ini.</p>;
 
   return subscription ? (
-    <button onClick={unsubscribe}>Nonaktifkan notifikasi</button>
+    <button
+      onClick={() => startTransition(() => unsubscribe())}
+      disabled={isPending}
+      className="inline-flex items-center justify-center gap-2 disabled:opacity-60"
+    >
+      {isPending && <Spinner size={16} />}
+      Nonaktifkan notifikasi
+    </button>
   ) : (
-    <button onClick={subscribe}>Aktifkan notifikasi</button>
+    <button
+      onClick={() => startTransition(() => subscribe())}
+      disabled={isPending}
+      className="inline-flex items-center justify-center gap-2 disabled:opacity-60"
+    >
+      {isPending && <Spinner size={16} />}
+      Aktifkan notifikasi
+    </button>
   );
 }

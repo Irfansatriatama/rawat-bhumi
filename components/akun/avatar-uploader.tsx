@@ -3,7 +3,8 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import imageCompression from "browser-image-compression";
-import { Camera, Loader2, Trash2 } from "lucide-react";
+import { Camera, Trash2 } from "lucide-react";
+import { Spinner } from "@/components/ui/loading";
 import { updateAvatar, removeAvatar } from "@/app/(app)/akun/actions";
 
 function readAsDataUrl(file: Blob): Promise<string> {
@@ -91,7 +92,7 @@ export function AvatarUploader({
           aria-label="Ubah foto profil"
           className="press absolute -bottom-0.5 -right-0.5 grid h-9 w-9 place-items-center rounded-full bg-brand-dark text-white ring-4 ring-white disabled:opacity-60"
         >
-          {busy === "upload" ? <Loader2 size={16} className="animate-spin" /> : <Camera size={16} />}
+          {busy === "upload" ? <Spinner size={16} /> : <Camera size={16} />}
         </button>
 
         <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={onPick} />
@@ -113,7 +114,7 @@ export function AvatarUploader({
           disabled={busy !== null}
           className="press mt-1 flex items-center gap-1 text-xs font-medium text-brand-red disabled:opacity-60"
         >
-          {busy === "remove" ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />}
+          {busy === "remove" ? <Spinner size={13} /> : <Trash2 size={13} />}
           Hapus foto
         </button>
       )}

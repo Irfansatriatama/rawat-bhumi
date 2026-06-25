@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, Loader2, Send } from "lucide-react";
+import { CheckCircle2, Send } from "lucide-react";
+import { Spinner } from "@/components/ui/loading";
 
 const CATEGORIES = ["Pickup terlambat", "Sampah tidak terangkut", "Masalah pembayaran", "Aplikasi error", "Lainnya"];
 const field = "w-full rounded-xl border border-brand-dark/10 bg-white px-3.5 py-3 text-sm text-brand-dark outline-none focus:border-brand-600";
@@ -74,7 +75,7 @@ export function ReportForm() {
         disabled={state === "sending"}
         className="press flex w-full items-center justify-center gap-1.5 rounded-xl bg-brand-dark py-3.5 text-sm font-semibold text-white disabled:opacity-60"
       >
-        {state === "sending" ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
+        {state === "sending" ? <Spinner size={16} /> : <Send size={16} />}
         {state === "sending" ? "Mengirim…" : "Kirim laporan"}
       </button>
     </form>

@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Loader2 } from "lucide-react";
+import { Check } from "lucide-react";
+import { Spinner } from "@/components/ui/loading";
 import { updateProfil } from "@/app/(app)/akun/actions";
 
 const field = "w-full rounded-xl border border-brand-dark/10 bg-white px-3.5 py-3 text-sm text-brand-dark outline-none focus:border-brand-600";
@@ -67,7 +68,7 @@ export function ProfilForm({
         disabled={state === "saving"}
         className="press flex w-full items-center justify-center gap-1.5 rounded-xl bg-brand-dark py-3.5 text-sm font-semibold text-white disabled:opacity-60"
       >
-        {state === "saving" && <Loader2 size={16} className="animate-spin" />}
+        {state === "saving" && <Spinner size={16} />}
         {state === "done" && <Check size={16} strokeWidth={3} />}
         {state === "done" ? "Tersimpan" : state === "saving" ? "Menyimpan…" : "Simpan perubahan"}
       </button>
