@@ -1,7 +1,9 @@
+import { CheckCircle2, Clock, Wallet, Receipt } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { namesByProfileId } from "@/lib/users";
 import { rupiah, tanggal } from "@/lib/format";
 import { PAYMENT_STATUS } from "@/lib/prisma-enums";
+import { Card, StatCard, PageHeading, StatusBadge, EmptyState } from "@/components/ui/primitives";
 import { GenerateInvoicesButton, VerifyPaymentButton } from "@/components/admin/subscription-actions";
 
 export default async function SubscriptionsPage() {
@@ -16,56 +18,56 @@ export default async function SubscriptionsPage() {
   const totalPaid = paid.reduce((a, b) => a + b.amount, 0);
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold text-brand-dark">Iuran & Pembayaran</h1>
-        <p className="text-sm text-gray-500">Iuran Rp 50.000/KK/bulan. QRIS (dummy) atau tunai (verifikasi admin).</p>
+    <div>
+      <PageHeading
+        title="Iuran & Pembayaran"
+        subtitle="Iuran Rp 50.000/KK/bulan. QRIS (dummy) atau tunai (verifikasi admin)."
+      />
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <StatCard icon={CheckCircle2} tone="green" value={paid.length} label="Lunas" />
+        <StatCard icon={Clock} tone="red" value={payments.length - paid.length} label="Belum bayar" />
+        <StatCard icon={Wallet} tone="teal" value={rupiah(totalPaid)} label="Total masuk" />
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
-        <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/5">
-          <p className="text-sm text-gray-500">Lunas</p>
-          <p className="text-2xl font-semibold text-brand-dark">{paid.length}</p>
-        </div>
-        <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/5">
-          <p className="text-sm text-gray-500">Belum bayar</p>
-          <p className="text-2xl font-semibold text-brand-red">{payments.length - paid.length}</p>
-        </div>
-        <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/5">
-          <p className="text-sm text-gray-500">Total masuk</p>
-          <p className="text-2xl font-semibold text-brand-dark">{rupiah(totalPaid)}</p>
-        </div>
-      </div>
-
-      <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
+      <Card className="mt-4 p-5">
         <GenerateInvoicesButton />
-      </div>
+      </Card>
 
-      <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
-        <h2 className="mb-3 font-semibold text-brand-dark">Tagihan <span className="text-sm font-normal text-gray-400">({payments.length})</span></h2>
+      <Card className="mt-4 overflow-hidden">
+        <div className="px-5 pt-5">
+          <h2 className="font-semibold text-brand-dark">
+            Tagihan <span className="text-sm font-normal text-gray-400">({payments.length})</span>
+          </h2>
+        </div>
         {payments.length === 0 ? (
-          <p className="text-sm text-gray-400">Belum ada tagihan. Klik “Generate Tagihan”.</p>
+          <div className="p-5">
+            <EmptyState icon={Receipt} title="Belum ada tagihan" hint="Klik “Generate Tagihan” untuk membuat tagihan baru." />
+          </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="text-gray-500"><tr className="border-b border-black/5">
-                <th className="py-2 pr-4">Warga</th><th className="py-2 pr-4">Jumlah</th>
-                <th className="py-2 pr-4">Metode</th><th className="py-2 pr-4">Status</th>
-                <th className="py-2 pr-4">Tanggal</th><th className="py-2 pr-4">Aksi</th>
-              </tr></thead>
+          <div className="mt-4 overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="border-b border-brand-dark/5 text-left text-xs uppercase tracking-wide text-gray-400">
+                <tr>
+                  <th className="px-4 py-3 font-medium">Warga</th>
+                  <th className="px-4 py-3 font-medium">Jumlah</th>
+                  <th className="px-4 py-3 font-medium">Metode</th>
+                  <th className="px-4 py-3 font-medium">Status</th>
+                  <th className="px-4 py-3 font-medium">Tanggal</th>
+                  <th className="px-4 py-3 font-medium">Aksi</th>
+                </tr>
+              </thead>
               <tbody>
                 {payments.map((p) => (
-                  <tr key={p.id} className="border-b border-black/5 last:border-0 text-gray-700">
-                    <td className="py-2 pr-4">{names.get(p.subscription.userId) ?? "-"}</td>
-                    <td className="py-2 pr-4">{rupiah(p.amount)}</td>
-                    <td className="py-2 pr-4">{p.method}</td>
-                    <td className="py-2 pr-4">
-                      <span className={`rounded-full px-2 py-0.5 text-xs ${p.status === PAYMENT_STATUS.PAID ? "bg-green-100 text-brand-dark" : "bg-gray-100 text-gray-500"}`}>
-                        {p.status}
-                      </span>
+                  <tr key={p.id} className="border-b border-brand-dark/5 last:border-0">
+                    <td className="px-4 py-3 font-medium text-brand-dark">{names.get(p.subscription.userId) ?? "-"}</td>
+                    <td className="px-4 py-3 text-gray-700">{rupiah(p.amount)}</td>
+                    <td className="px-4 py-3 text-gray-700">{p.method}</td>
+                    <td className="px-4 py-3">
+                      <StatusBadge tone={p.status === PAYMENT_STATUS.PAID ? "green" : "amber"}>{p.status}</StatusBadge>
                     </td>
-                    <td className="py-2 pr-4">{p.paidAt ? tanggal(p.paidAt) : "-"}</td>
-                    <td className="py-2 pr-4">
+                    <td className="px-4 py-3 text-gray-700">{p.paidAt ? tanggal(p.paidAt) : "-"}</td>
+                    <td className="px-4 py-3">
                       {p.status !== PAYMENT_STATUS.PAID && <VerifyPaymentButton paymentId={p.id} />}
                     </td>
                   </tr>
@@ -74,7 +76,7 @@ export default async function SubscriptionsPage() {
             </table>
           </div>
         )}
-      </div>
+      </Card>
     </div>
   );
 }

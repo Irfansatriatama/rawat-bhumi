@@ -1,8 +1,19 @@
+import { CalendarClock } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { listKsatriaOptions } from "@/lib/users";
 import { PickupCreateForm } from "@/components/admin/pickup-create-form";
 import { PickupAssignSelect } from "@/components/admin/pickup-assign-select";
 import { tanggal } from "@/lib/format";
+import { Card, PageHeading, SectionTitle, EmptyState, StatusBadge } from "@/components/ui/primitives";
+
+const STATUS_TONE: Record<string, "green" | "amber" | "teal" | "red" | "slate"> = {
+  COMPLETED: "green",
+  DONE: "green",
+  SCHEDULED: "teal",
+  PENDING: "amber",
+  IN_PROGRESS: "amber",
+  CANCELLED: "red",
+};
 
 export default async function PickupPage() {
   const [schedules, rts, ksatriaOptions] = await Promise.all([
@@ -17,51 +28,57 @@ export default async function PickupPage() {
   const rtOptions = rts.map((rt) => ({ id: rt.id, label: `RT ${rt.number} / RW ${rt.rw.number}` }));
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold text-brand-dark">Jadwal Pickup</h1>
-        <p className="text-sm text-gray-500">Buat jadwal mingguan & assign Ksatria Bhumi.</p>
-      </div>
-      <PickupCreateForm rtOptions={rtOptions} ksatriaOptions={ksatriaOptions} />
+    <div>
+      <PageHeading title="Jadwal Pickup" subtitle="Buat jadwal mingguan & assign Ksatria Bhumi." />
 
-      <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
-        <h2 className="mb-3 font-semibold text-brand-dark">
-          Jadwal <span className="text-sm font-normal text-gray-400">({schedules.length})</span>
-        </h2>
-        {schedules.length === 0 ? (
-          <p className="text-sm text-gray-400">Belum ada jadwal.</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="text-gray-500">
-                <tr className="border-b border-black/5">
-                  <th className="py-2 pr-4">Tanggal</th>
-                  <th className="py-2 pr-4">RT</th>
-                  <th className="py-2 pr-4">Slot</th>
-                  <th className="py-2 pr-4">Ksatria</th>
-                  <th className="py-2 pr-4">Request</th>
-                  <th className="py-2 pr-4">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {schedules.map((s) => (
-                  <tr key={s.id} className="border-b border-black/5 last:border-0">
-                    <td className="py-2 pr-4 text-gray-700">{tanggal(s.scheduledDate)}</td>
-                    <td className="py-2 pr-4 text-gray-600">RT {s.rt.number}/RW {s.rt.rw.number}</td>
-                    <td className="py-2 pr-4 text-gray-600">{s.timeSlot}</td>
-                    <td className="py-2 pr-4">
-                      <PickupAssignSelect scheduleId={s.id} ksatriaOptions={ksatriaOptions} current={s.ksatriaId} />
-                    </td>
-                    <td className="py-2 pr-4 text-gray-600">{s._count.pickupRequests}</td>
-                    <td className="py-2 pr-4">
-                      <span className="rounded-full bg-brand-bg px-2 py-0.5 text-xs text-brand-dark">{s.status}</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+      <div className="space-y-6">
+        <PickupCreateForm rtOptions={rtOptions} ksatriaOptions={ksatriaOptions} />
+
+        <div>
+          <SectionTitle>
+            Jadwal <span className="font-normal text-gray-400">({schedules.length})</span>
+          </SectionTitle>
+          {schedules.length === 0 ? (
+            <EmptyState
+              icon={CalendarClock}
+              title="Belum ada jadwal"
+              hint="Buat jadwal pickup mingguan dan assign Ksatria Bhumi untuk memulai."
+            />
+          ) : (
+            <Card className="overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="border-b border-brand-dark/5 text-left text-xs uppercase tracking-wide text-gray-400">
+                    <tr>
+                      <th className="px-4 py-3 font-medium">Tanggal</th>
+                      <th className="px-4 py-3 font-medium">RT</th>
+                      <th className="px-4 py-3 font-medium">Slot</th>
+                      <th className="px-4 py-3 font-medium">Ksatria</th>
+                      <th className="px-4 py-3 font-medium">Request</th>
+                      <th className="px-4 py-3 font-medium">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {schedules.map((s) => (
+                      <tr key={s.id} className="border-b border-brand-dark/5 last:border-0">
+                        <td className="px-4 py-3 text-brand-dark">{tanggal(s.scheduledDate)}</td>
+                        <td className="px-4 py-3 text-gray-500">RT {s.rt.number}/RW {s.rt.rw.number}</td>
+                        <td className="px-4 py-3 text-gray-500">{s.timeSlot}</td>
+                        <td className="px-4 py-3">
+                          <PickupAssignSelect scheduleId={s.id} ksatriaOptions={ksatriaOptions} current={s.ksatriaId} />
+                        </td>
+                        <td className="px-4 py-3 text-gray-500">{s._count.pickupRequests}</td>
+                        <td className="px-4 py-3">
+                          <StatusBadge tone={STATUS_TONE[s.status] ?? "slate"}>{s.status}</StatusBadge>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          )}
+        </div>
       </div>
     </div>
   );

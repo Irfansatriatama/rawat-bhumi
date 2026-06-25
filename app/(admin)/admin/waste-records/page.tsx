@@ -1,7 +1,9 @@
+import { Scale } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { listKsatriaOptions, namesByProfileId } from "@/lib/users";
 import { WasteInputForm } from "@/components/admin/waste-input-form";
 import { tanggal, kg } from "@/lib/format";
+import { Card, PageHeading, SectionTitle, EmptyState } from "@/components/ui/primitives";
 
 export default async function WasteRecordsPage() {
   const [records, openReqs, ksatriaOptions] = await Promise.all([
@@ -24,53 +26,62 @@ export default async function WasteRecordsPage() {
   }));
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold text-brand-dark">Timbangan</h1>
-        <p className="text-sm text-gray-500">Input manual bila Ksatria offline. Poin & CO₂ dihitung otomatis.</p>
-      </div>
-      <WasteInputForm requestOptions={requestOptions} ksatriaOptions={ksatriaOptions} />
+    <div>
+      <PageHeading
+        title="Timbangan"
+        subtitle="Input manual bila Ksatria offline. Poin & CO₂ dihitung otomatis."
+      />
 
-      <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
-        <h2 className="mb-3 font-semibold text-brand-dark">
-          Riwayat Timbangan <span className="text-sm font-normal text-gray-400">({records.length})</span>
-        </h2>
-        {records.length === 0 ? (
-          <p className="text-sm text-gray-400">Belum ada catatan timbangan.</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="text-gray-500">
-                <tr className="border-b border-black/5">
-                  <th className="py-2 pr-3">Tanggal</th>
-                  <th className="py-2 pr-3">Warga</th>
-                  <th className="py-2 pr-3">Org</th>
-                  <th className="py-2 pr-3">Anorg</th>
-                  <th className="py-2 pr-3">Residu</th>
-                  <th className="py-2 pr-3">B3</th>
-                  <th className="py-2 pr-3">Total</th>
-                  <th className="py-2 pr-3">Poin</th>
-                  <th className="py-2 pr-3">CO₂</th>
-                </tr>
-              </thead>
-              <tbody>
-                {records.map((r) => (
-                  <tr key={r.id} className="border-b border-black/5 last:border-0 text-gray-700">
-                    <td className="py-2 pr-3">{tanggal(r.recordedAt)}</td>
-                    <td className="py-2 pr-3">{names.get(r.userId) ?? "-"}</td>
-                    <td className="py-2 pr-3">{r.organikGrams}</td>
-                    <td className="py-2 pr-3">{r.anorganikGrams}</td>
-                    <td className="py-2 pr-3">{r.residuGrams}</td>
-                    <td className="py-2 pr-3">{r.b3Grams}</td>
-                    <td className="py-2 pr-3 font-medium">{kg(r.totalGrams)} kg</td>
-                    <td className="py-2 pr-3 text-brand-dark">+{r.pointsEarned}</td>
-                    <td className="py-2 pr-3">{r.co2ReducedKg.toFixed(2)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+      <div className="space-y-6">
+        <WasteInputForm requestOptions={requestOptions} ksatriaOptions={ksatriaOptions} />
+
+        <div>
+          <SectionTitle>
+            Riwayat Timbangan <span className="font-normal text-gray-400">({records.length})</span>
+          </SectionTitle>
+          {records.length === 0 ? (
+            <EmptyState
+              icon={Scale}
+              title="Belum ada catatan timbangan"
+              hint="Catatan timbangan akan muncul di sini setelah input manual atau dari Ksatria."
+            />
+          ) : (
+            <Card className="overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="border-b border-brand-dark/5 text-left text-xs uppercase tracking-wide text-gray-400">
+                    <tr>
+                      <th className="px-4 py-3 font-medium">Tanggal</th>
+                      <th className="px-4 py-3 font-medium">Warga</th>
+                      <th className="px-4 py-3 font-medium">Org</th>
+                      <th className="px-4 py-3 font-medium">Anorg</th>
+                      <th className="px-4 py-3 font-medium">Residu</th>
+                      <th className="px-4 py-3 font-medium">B3</th>
+                      <th className="px-4 py-3 font-medium">Total</th>
+                      <th className="px-4 py-3 font-medium">Poin</th>
+                      <th className="px-4 py-3 font-medium">CO₂</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {records.map((r) => (
+                      <tr key={r.id} className="border-b border-brand-dark/5 last:border-0">
+                        <td className="px-4 py-3 text-brand-dark">{tanggal(r.recordedAt)}</td>
+                        <td className="px-4 py-3 text-gray-500">{names.get(r.userId) ?? "-"}</td>
+                        <td className="px-4 py-3 text-gray-500">{r.organikGrams}</td>
+                        <td className="px-4 py-3 text-gray-500">{r.anorganikGrams}</td>
+                        <td className="px-4 py-3 text-gray-500">{r.residuGrams}</td>
+                        <td className="px-4 py-3 text-gray-500">{r.b3Grams}</td>
+                        <td className="px-4 py-3 font-medium text-brand-dark">{kg(r.totalGrams)} kg</td>
+                        <td className="px-4 py-3 font-medium text-brand-600">+{r.pointsEarned}</td>
+                        <td className="px-4 py-3 text-gray-500">{r.co2ReducedKg.toFixed(2)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          )}
+        </div>
       </div>
     </div>
   );
