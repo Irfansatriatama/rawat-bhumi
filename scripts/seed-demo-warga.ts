@@ -97,10 +97,10 @@ async function main() {
 
   // 4) Materi belajar (carousel) — upsert by slug
   const materi = [
-    { slug: "pilah-organik-benar", title: "Cara memilah sampah organik dengan benar", category: CONTENT_CATEGORY.ORGANIK, videoUrl: "https://example.com/v1" },
-    { slug: "anorganik-bernilai", title: "Sampah anorganik yang masih bernilai jual", category: CONTENT_CATEGORY.ANORGANIK, videoUrl: null },
-    { slug: "kenali-limbah-b3", title: "Kenali limbah B3 & e-waste di rumah", category: CONTENT_CATEGORY.B3, videoUrl: "https://example.com/v2" },
-    { slug: "budidaya-maggot-bsf", title: "Budidaya maggot BSF dari sisa dapur", category: CONTENT_CATEGORY.MAGGOT_BSF, videoUrl: "https://example.com/v3" },
+    { slug: "pilah-organik-benar", title: "Cara memilah sampah organik dengan benar", category: CONTENT_CATEGORY.ORGANIK, videoUrl: "https://www.youtube.com/watch?v=YRFdja0AAVE" },
+    { slug: "anorganik-bernilai", title: "Sampah anorganik yang masih bernilai jual", category: CONTENT_CATEGORY.ANORGANIK, videoUrl: "https://www.youtube.com/watch?v=b9C3zUbeCKA" },
+    { slug: "kenali-limbah-b3", title: "Kenali limbah B3 & e-waste di rumah", category: CONTENT_CATEGORY.B3, videoUrl: "https://www.youtube.com/watch?v=6R_WLAuTNx0" },
+    { slug: "budidaya-maggot-bsf", title: "Budidaya maggot BSF dari sisa dapur", category: CONTENT_CATEGORY.MAGGOT_BSF, videoUrl: "https://www.youtube.com/watch?v=_hAv9wrPAvc" },
   ];
   for (const m of materi) {
     await prisma.educationContent.upsert({

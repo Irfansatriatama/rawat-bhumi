@@ -56,7 +56,7 @@ async function main() {
         "Memilah organik sejak dari rumah membuat proses kompos lebih cepat dan bersih.",
       tags: ["organik", "pemilahan", "kompos"],
       viewCount: 4800,
-      videoUrl: "https://www.youtube.com/watch?v=organik",
+      videoUrl: "https://www.youtube.com/watch?v=YRFdja0AAVE",
       daysAgo: 1,
     },
     {
@@ -72,7 +72,7 @@ async function main() {
         "Tambahan: B3 (baterai, lampu, elektronik) butuh penanganan khusus.",
       tags: ["dasar", "pemilahan"],
       viewCount: 6200,
-      videoUrl: "https://www.youtube.com/watch?v=jenis",
+      videoUrl: "https://www.youtube.com/watch?v=x2xhAQIodN0",
       daysAgo: 3,
     },
     {
@@ -87,7 +87,7 @@ async function main() {
         "Keduanya mengurangi sampah ke TPA dan menghasilkan produk bernilai.",
       tags: ["organik", "maggot", "kompos"],
       viewCount: 5100,
-      videoUrl: "https://www.youtube.com/watch?v=daurorganik",
+      videoUrl: "https://www.youtube.com/watch?v=_hAv9wrPAvc",
       daysAgo: 5,
     },
     {
@@ -103,7 +103,7 @@ async function main() {
         "Kebiasaan kecil ini berdampak besar pada pengurangan emisi.",
       tags: ["anorganik", "plastik", "reduce"],
       viewCount: 7300,
-      videoUrl: "https://www.youtube.com/watch?v=plastik",
+      videoUrl: "https://www.youtube.com/watch?v=b9C3zUbeCKA",
       daysAgo: 2,
     },
     {
@@ -116,7 +116,7 @@ async function main() {
         "dan mengurangi konsumsi berlebih. Konsistensi kecil setiap hari membentuk dampak besar.",
       tags: ["lingkungan", "kebiasaan"],
       viewCount: 3400,
-      videoUrl: null as string | null,
+      videoUrl: "https://www.youtube.com/watch?v=xjC7FhLk3Ng" as string | null,
       daysAgo: 7,
     },
     {
@@ -132,7 +132,7 @@ async function main() {
         "Penanganan benar mencegah pencemaran tanah dan air.",
       tags: ["b3", "e-waste"],
       viewCount: 2900,
-      videoUrl: "https://www.youtube.com/watch?v=b3",
+      videoUrl: "https://www.youtube.com/watch?v=6R_WLAuTNx0",
       daysAgo: 9,
     },
     {
@@ -160,7 +160,7 @@ async function main() {
         "3. Aduk berkala, panen kompos dalam 4-6 minggu.",
       tags: ["organik", "kompos", "diy"],
       viewCount: 4100,
-      videoUrl: "https://www.youtube.com/watch?v=kompos",
+      videoUrl: "https://www.youtube.com/watch?v=FaONF60w_Vg",
       daysAgo: 6,
     },
   ];

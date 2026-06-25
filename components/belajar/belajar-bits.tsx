@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Play, BookOpen, ChevronRight } from "lucide-react";
 import { CONTENT_CATEGORY_LABEL } from "@/lib/belajar";
+import { youtubeId, youtubeThumb } from "@/lib/youtube";
 
 /** Bentuk minimal materi yang dipakai kartu (kompatibel dgn EducationContent Prisma). */
 export type MateriLite = {
@@ -50,11 +51,13 @@ export function VideoThumb({
   m: MateriLite;
   className?: string;
 }) {
+  const vid = youtubeId(m.videoUrl);
+  const poster = m.imageUrl || (vid ? youtubeThumb(vid) : null);
   return (
     <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-br from-brand-dark/15 to-brand/15 ${className}`}>
-      {m.imageUrl && (
+      {poster && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={m.imageUrl} alt={m.title} className="h-full w-full object-cover" />
+        <img src={poster} alt={m.title} className="h-full w-full object-cover" />
       )}
       <span className="absolute inset-0 grid place-items-center">
         <span className="grid h-11 w-11 place-items-center rounded-full bg-white/90 text-brand-dark shadow">

@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Play, Eye, CalendarDays, ClipboardCheck, ChevronRight, BookOpen } from "lucide-react";
+import { Eye, CalendarDays, ClipboardCheck, ChevronRight, BookOpen } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { tanggal } from "@/lib/format";
+import { youtubeId } from "@/lib/youtube";
 import { AppHeader } from "@/components/ui/app-header";
+import { VideoPlayer } from "@/components/belajar/video-player";
 import { CONTENT_CATEGORY_LABEL } from "@/lib/belajar";
 import { MateriRow, formatViews, type MateriLite } from "@/components/belajar/belajar-bits";
 
@@ -22,6 +24,7 @@ export default async function ContentDetail({ params }: { params: Promise<{ slug
   })) as MateriLite[];
 
   const catLabel = CONTENT_CATEGORY_LABEL[content.category] ?? content.category;
+  const videoId = youtubeId(content.videoUrl);
 
   return (
     <article>
@@ -29,29 +32,20 @@ export default async function ContentDetail({ params }: { params: Promise<{ slug
 
       <div className="space-y-4 p-5">
         {/* media */}
-        <div className="relative aspect-video overflow-hidden rounded-[var(--radius-card)] bg-gradient-to-br from-brand-dark/15 to-brand/15 [box-shadow:var(--shadow-soft)]">
-          {content.imageUrl && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={content.imageUrl} alt={content.title} className="h-full w-full object-cover" />
-          )}
-          {content.videoUrl && (
-            <a
-              href={content.videoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="press absolute inset-0 grid place-items-center"
-            >
-              <span className="grid h-14 w-14 place-items-center rounded-full bg-white/90 text-brand-dark shadow-lg">
-                <Play size={24} className="ml-1 fill-current" />
+        {videoId ? (
+          <VideoPlayer videoId={videoId} title={content.title} poster={content.imageUrl} />
+        ) : (
+          <div className="relative aspect-video overflow-hidden rounded-[var(--radius-card)] bg-gradient-to-br from-brand-dark/15 to-brand/15 [box-shadow:var(--shadow-soft)]">
+            {content.imageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={content.imageUrl} alt={content.title} className="h-full w-full object-cover" />
+            ) : (
+              <span className="absolute inset-0 grid place-items-center text-brand-dark/30">
+                <BookOpen size={40} />
               </span>
-            </a>
-          )}
-          {!content.imageUrl && !content.videoUrl && (
-            <span className="absolute inset-0 grid place-items-center text-brand-dark/30">
-              <BookOpen size={40} />
-            </span>
-          )}
-        </div>
+            )}
+          </div>
+        )}
 
         {/* meta */}
         <div className="flex items-center gap-4 text-xs text-gray-500">

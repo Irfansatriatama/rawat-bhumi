@@ -113,7 +113,7 @@ export default async function AkunPage() {
 
       <div className="space-y-4 p-4 pb-6">
         {/* ===== PROFIL ===== */}
-        <Link href="/akun/notifikasi" className="flex items-center gap-3.5 px-1 pt-1">
+        <Link href="/akun/profil" className="flex items-center gap-3.5 px-1 pt-1">
           {profile?.avatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={profile.avatarUrl} alt={name} className="h-16 w-16 rounded-full object-cover ring-2 ring-brand-soft" />
