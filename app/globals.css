@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f3f8f4;
+  --foreground: #122a23;
 }
 
 @theme inline {
@@ -10,17 +10,42 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Brand Rawat Bhumi — eco friendly & playful */
+  --color-brand: #4ce059;          /* hijau pop (aksen utama) */
+  --color-brand-600: #22b24c;      /* hijau tegas untuk teks di atas terang */
+  --color-brand-dark: #0f5d4d;     /* teal gelap (header, judul) */
+  --color-brand-deep: #0a3f34;     /* teal paling gelap (gradient bawah) */
+  --color-brand-lime: #a0cc44;
+  --color-brand-soft: #e6f6ea;     /* permukaan kartu lembut */
+  --color-brand-tint: #f3f8f4;     /* latar halaman */
+  --color-brand-red: #b3261e;
+  --color-brand-amber: #c2820b;
+
+  /* sudut & bayangan terstandar */
+  --radius-card: 1.25rem;          /* 20px — satu skala untuk semua kartu */
+
+  --shadow-soft: 0 1px 2px rgb(15 93 77 / 0.04), 0 8px 24px -12px rgb(15 93 77 / 0.18);
+  --shadow-pop: 0 10px 30px -10px rgb(34 178 76 / 0.45);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Header eco: gradient teal membulat di bawah */
+.app-header {
+  background: linear-gradient(150deg, var(--color-brand-dark) 0%, var(--color-brand-deep) 100%);
+}
+
+/* sembunyikan scrollbar untuk baris pill horizontal */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .press { transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1); }
+  .press:active { transform: scale(0.97); }
 }
