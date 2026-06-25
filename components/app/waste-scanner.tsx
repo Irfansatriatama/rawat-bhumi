@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { WasteScanResult } from "@/lib/gemini";
+import { Spinner } from "@/components/ui/loading";
 
 export function WasteScanner() {
   const [result, setResult] = useState<WasteScanResult | null>(null);
@@ -35,13 +36,20 @@ export function WasteScanner() {
 
   return (
     <div className="space-y-4">
-      <label className="block cursor-pointer rounded-2xl border-2 border-dashed border-brand/40 bg-brand-bg p-6 text-center">
-        <input type="file" accept="image/*" capture="environment" className="hidden" onChange={onFile} />
-        <span className="text-sm font-medium text-brand-dark">📷 Ambil / unggah foto sampah</span>
+      <label
+        aria-busy={loading || undefined}
+        className={`flex items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-brand/40 bg-brand-bg p-6 text-center ${
+          loading ? "pointer-events-none opacity-60" : "cursor-pointer"
+        }`}
+      >
+        <input type="file" accept="image/*" capture="environment" className="hidden" onChange={onFile} disabled={loading} />
+        {loading && <Spinner size={16} className="text-brand-dark" />}
+        <span className="text-sm font-medium text-brand-dark">
+          {loading ? "Memindai…" : "📷 Ambil / unggah foto sampah"}
+        </span>
       </label>
 
       {preview && <img src={preview} alt="preview" className="mx-auto max-h-48 rounded-xl object-contain" />}
-      {loading && <p className="text-center text-sm text-gray-500">Memindai…</p>}
       {err && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-brand-red">{err}</p>}
 
       {result && (

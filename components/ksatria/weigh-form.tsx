@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, AlertCircle, Inbox } from "lucide-react";
 import { Card, EmptyState } from "@/components/ui/primitives";
+import { Spinner } from "@/components/ui/loading";
 
 type Opt = { id: string; label: string };
 
@@ -101,6 +102,7 @@ export function KsatriaWeighForm({ requestOptions }: { requestOptions: Opt[] }) 
           disabled={loading}
           className="press flex w-full items-center justify-center gap-1.5 rounded-xl bg-brand-dark py-3.5 text-sm font-semibold text-white disabled:opacity-60"
         >
+          {loading && <Spinner size={16} />}
           {loading ? "Menyimpan…" : "Simpan timbangan"}
         </button>
       </form>

@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronRight, Check, Loader2 } from "lucide-react";
+import { ChevronRight, Check } from "lucide-react";
+import { Spinner } from "@/components/ui/loading";
 
 /**
  * Dua tombol di dalam hero "Pickup Berikutnya":
@@ -52,7 +53,7 @@ export function PickupHeroActions({
         className="press flex w-full items-center justify-center gap-2 rounded-2xl bg-white py-3.5 text-[15px] font-semibold text-brand-dark disabled:opacity-70"
       >
         {loading ? (
-          <Loader2 size={17} className="animate-spin" />
+          <Spinner size={17} />
         ) : done ? (
           <Check size={17} strokeWidth={2.6} className="text-brand-600" />
         ) : null}

@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, CalendarCheck, Loader2 } from "lucide-react";
+import { Check, CalendarCheck } from "lucide-react";
+import { Spinner } from "@/components/ui/loading";
 
 export function PickupConfirmButton({ scheduleId, confirmed }: { scheduleId: string; confirmed: boolean }) {
   const router = useRouter();
@@ -35,7 +36,7 @@ export function PickupConfirmButton({ scheduleId, confirmed }: { scheduleId: str
       className="press flex w-full items-center justify-center gap-1.5 rounded-xl bg-brand-dark py-2.5 text-xs font-semibold text-white hover:opacity-90 disabled:opacity-60"
     >
       {loading ? (
-        <Loader2 size={15} className="animate-spin" />
+        <Spinner size={15} />
       ) : (
         <CalendarCheck size={15} strokeWidth={2.2} />
       )}
