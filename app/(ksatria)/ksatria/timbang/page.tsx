@@ -15,8 +15,11 @@ export default async function TimbangPage() {
   }));
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-xl font-semibold text-brand-dark">Input Timbangan</h1>
+    <div className="space-y-5 p-4">
+      <div>
+        <h2 className="text-lg font-bold tracking-tight text-brand-dark">Input Timbangan</h2>
+        <p className="text-sm text-gray-500">Catat berat sampah per kategori untuk tiap KK.</p>
+      </div>
       <KsatriaWeighForm requestOptions={options} />
     </div>
   );

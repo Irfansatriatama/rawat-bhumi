@@ -1,7 +1,9 @@
+import { Wallet, Truck, Scale, Coins } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { getKsatriaProfile } from "@/lib/ksatria";
 import { calcKsatriaEarning } from "@/lib/business-rules";
 import { rupiah } from "@/lib/format";
+import { Card, StatCard, EmptyState, SectionTitle } from "@/components/ui/primitives";
 
 export default async function PenghasilanPage() {
   const kp = await getKsatriaProfile();
@@ -20,30 +22,45 @@ export default async function PenghasilanPage() {
   const est = calcKsatriaEarning(recs.length, totalGrams);
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-xl font-semibold text-brand-dark">Penghasilan</h1>
+    <div className="space-y-5 p-4">
+      <div>
+        <h2 className="text-lg font-bold tracking-tight text-brand-dark">Penghasilan</h2>
+        <p className="text-sm text-gray-500">Estimasi & riwayat pendapatanmu.</p>
+      </div>
 
-      <div className="rounded-2xl bg-brand-dark p-5 text-white">
-        <p className="text-sm text-white/70">Estimasi bulan ini</p>
-        <p className="mt-1 text-3xl font-bold">{rupiah(est.totalAmount)}</p>
-        <p className="mt-1 text-xs text-white/60">
-          {recs.length} pickup · {(totalGrams / 1000).toFixed(1)} kg · base {rupiah(est.baseAmount)} + bonus {rupiah(est.bonusAmount)}
+      <Card className="relative overflow-hidden bg-brand-dark p-5">
+        <Wallet className="pointer-events-none absolute -right-3 -top-3 text-white/10" size={96} strokeWidth={1.4} />
+        <p className="text-xs font-medium text-white/70">Estimasi bulan ini</p>
+        <p className="mt-1 text-3xl font-bold tracking-tight text-white">{rupiah(est.totalAmount)}</p>
+        <p className="mt-2 text-xs text-white/60">
+          base {rupiah(est.baseAmount)} + bonus {rupiah(est.bonusAmount)}
         </p>
+      </Card>
+
+      <div className="grid grid-cols-2 gap-3">
+        <StatCard icon={Truck} tone="teal" value={recs.length} label="Pickup bulan ini" />
+        <StatCard icon={Scale} tone="green" value={(totalGrams / 1000).toFixed(1)} suffix="kg" label="Total ditimbang" />
       </div>
 
-      <div className="space-y-2">
-        <h2 className="text-sm font-medium text-gray-500">Riwayat (per bulan)</h2>
+      <section>
+        <SectionTitle>Riwayat (per bulan)</SectionTitle>
         {earnings.length === 0 ? (
-          <p className="text-sm text-gray-400">Belum ada penghasilan ter-finalisasi (dihitung via cron tgl 28).</p>
+          <EmptyState
+            icon={Coins}
+            title="Belum ada penghasilan"
+            hint="Penghasilan ter-finalisasi dihitung otomatis via cron tiap tanggal 28."
+          />
         ) : (
-          earnings.map((e) => (
-            <div key={e.id} className="flex justify-between rounded-xl bg-white p-3 text-sm ring-1 ring-black/5">
-              <span className="text-gray-700">{e.period}</span>
-              <span className="font-medium text-brand-dark">{rupiah(e.totalAmount)}</span>
-            </div>
-          ))
+          <div className="space-y-2.5">
+            {earnings.map((e) => (
+              <Card key={e.id} className="flex items-center justify-between p-3.5">
+                <span className="text-sm font-medium text-gray-700">{e.period}</span>
+                <span className="text-sm font-semibold text-brand-dark">{rupiah(e.totalAmount)}</span>
+              </Card>
+            ))}
+          </div>
         )}
-      </div>
+      </section>
     </div>
   );
 }
