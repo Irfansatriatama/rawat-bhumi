@@ -1,12 +1,22 @@
 import Link from "next/link";
+import { Scale, CalendarDays, MapPin, ChevronRight, AlertTriangle } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { getKsatriaProfile, openRequestsForKsatria } from "@/lib/ksatria";
 import { tanggal } from "@/lib/format";
+import { Card, StatCard, IconChip, SectionTitle, EmptyState } from "@/components/ui/primitives";
 
 export default async function KsatriaDashboard() {
   const kp = await getKsatriaProfile();
   if (!kp) {
-    return <p className="rounded-2xl bg-amber-50 p-4 text-sm text-amber-700">Akun ini belum punya profil Ksatria. Hubungi admin.</p>;
+    return (
+      <div className="p-4">
+        <EmptyState
+          icon={AlertTriangle}
+          title="Profil Ksatria belum aktif"
+          hint="Akun ini belum punya profil Ksatria. Hubungi admin untuk diaktifkan."
+        />
+      </div>
+    );
   }
 
   const [open, schedules] = await Promise.all([
@@ -15,29 +25,42 @@ export default async function KsatriaDashboard() {
   ]);
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-xl font-semibold text-brand-dark">Tugas Hari Ini</h1>
+    <div className="space-y-5 p-4">
+      <div>
+        <h2 className="text-lg font-bold tracking-tight text-brand-dark">Tugas Hari Ini</h2>
+        <p className="text-sm text-gray-500">Ringkasan penjemputan & timbangan kamu.</p>
+      </div>
+
       <div className="grid grid-cols-2 gap-3">
-        <div className="rounded-2xl bg-brand-bg p-4">
-          <p className="text-2xl font-semibold text-brand-dark">{open.length}</p>
-          <p className="text-xs text-gray-500">KK menunggu ditimbang</p>
-        </div>
-        <div className="rounded-2xl bg-brand-bg p-4">
-          <p className="text-2xl font-semibold text-brand-dark">{schedules.length}</p>
-          <p className="text-xs text-gray-500">Jadwal terbaru</p>
-        </div>
+        <StatCard icon={Scale} tone="green" value={open.length} label="KK menunggu ditimbang" />
+        <StatCard icon={CalendarDays} tone="teal" value={schedules.length} label="Jadwal terbaru" />
       </div>
-      <Link href="/ksatria/rute" className="block rounded-xl bg-brand-dark px-4 py-3 text-center text-sm font-medium text-white">
-        Lihat Rute →
+
+      <Link
+        href="/ksatria/rute"
+        className="press flex items-center justify-center gap-1.5 rounded-xl bg-brand-dark py-3.5 text-sm font-semibold text-white"
+      >
+        Lihat Rute Hari Ini <ChevronRight size={16} />
       </Link>
-      <div className="space-y-2">
-        <h2 className="text-sm font-medium text-gray-500">Jadwal terbaru</h2>
-        {schedules.map((s) => (
-          <div key={s.id} className="rounded-xl bg-white p-3 text-sm ring-1 ring-black/5">
-            RT {s.rt.number} · {tanggal(s.scheduledDate)} · {s.timeSlot}
+
+      <section>
+        <SectionTitle>Jadwal terbaru</SectionTitle>
+        {schedules.length === 0 ? (
+          <EmptyState icon={CalendarDays} title="Belum ada jadwal" hint="Jadwal penjemputan akan muncul saat admin menugaskan kamu." />
+        ) : (
+          <div className="space-y-2.5">
+            {schedules.map((s) => (
+              <Card key={s.id} className="flex items-center gap-3 p-3.5">
+                <IconChip icon={MapPin} tone="teal" size={40} />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold text-brand-dark">RT {s.rt.number}</p>
+                  <p className="text-xs text-gray-500">{tanggal(s.scheduledDate)} · {s.timeSlot}</p>
+                </div>
+              </Card>
+            ))}
           </div>
-        ))}
-      </div>
+        )}
+      </section>
     </div>
   );
 }

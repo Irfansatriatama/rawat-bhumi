@@ -19,6 +19,7 @@
   --color-brand-lime: #a0cc44;
   --color-brand-soft: #e6f6ea;     /* permukaan kartu lembut */
   --color-brand-tint: #f3f8f4;     /* latar halaman */
+  --color-brand-bg: #f3f8f4;       /* alias latar halaman (admin/ksatria) = tint */
   --color-brand-red: #b3261e;
   --color-brand-amber: #c2820b;
 

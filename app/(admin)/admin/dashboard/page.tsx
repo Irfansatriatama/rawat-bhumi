@@ -1,5 +1,7 @@
+import { Users, UserCheck, Scale, Cloud, Truck, Info } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { USER_ROLE } from "@/lib/prisma-enums";
+import { Card, StatCard, PageHeading } from "@/components/ui/primitives";
 
 function startOfWeek(): Date {
   const d = new Date();
@@ -7,18 +9,6 @@ function startOfWeek(): Date {
   d.setHours(0, 0, 0, 0);
   d.setDate(d.getDate() - day);
   return d;
-}
-
-function Kpi({ label, value, unit }: { label: string; value: string; unit?: string }) {
-  return (
-    <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
-      <p className="text-sm text-gray-500">{label}</p>
-      <p className="mt-2 text-3xl font-semibold text-brand-dark">
-        {value}
-        {unit && <span className="ml-1 text-base font-normal text-gray-400">{unit}</span>}
-      </p>
-    </div>
-  );
 }
 
 export default async function AdminDashboard() {
@@ -38,25 +28,27 @@ export default async function AdminDashboard() {
 
   return (
     <div>
-      <h1 className="mb-1 text-2xl font-semibold text-brand-dark">Dashboard</h1>
-      <p className="mb-6 text-sm text-gray-500">Ringkasan pilot RT 14 RW 01 Jagakarsa</p>
+      <PageHeading title="Dashboard" subtitle="Ringkasan pilot RT 14 RW 01 Jagakarsa" />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Kpi label="KK terdaftar (target 150)" value={String(rtAgg._sum.totalKK ?? 0)} unit="KK" />
-        <Kpi label="Warga aktif" value={String(wargaCount)} unit="org" />
-        <Kpi label="Sampah minggu ini" value={kgMingguIni} unit="kg" />
-        <Kpi label="CO₂ dikurangi (total)" value={co2Total} unit="kg" />
+        <StatCard icon={Users} tone="teal" value={String(rtAgg._sum.totalKK ?? 0)} suffix="KK" label="KK terdaftar (target 150)" />
+        <StatCard icon={UserCheck} tone="green" value={String(wargaCount)} suffix="org" label="Warga aktif" />
+        <StatCard icon={Scale} tone="lime" value={kgMingguIni} suffix="kg" label="Sampah minggu ini" />
+        <StatCard icon={Cloud} tone="amber" value={co2Total} suffix="kg" label="CO₂ dikurangi (total)" />
       </div>
 
-      <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <Kpi label="Pickup selesai (total)" value={String(pickupCount)} />
-        <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5 lg:col-span-2">
-          <p className="text-sm font-medium text-gray-700">Catatan</p>
-          <p className="mt-2 text-sm text-gray-500">
+      <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <StatCard icon={Truck} tone="teal" value={String(pickupCount)} label="Pickup selesai (total)" />
+        <Card className="p-5 lg:col-span-2">
+          <div className="mb-2 flex items-center gap-2">
+            <Info size={15} className="text-brand-600" />
+            <p className="text-sm font-semibold text-brand-dark">Catatan</p>
+          </div>
+          <p className="text-sm leading-relaxed text-gray-500">
             Data masih kosong — modul pickup, timbangan, dan hilir akan mengisi angka di atas
-            (Fase 1+). Chart & tabel menyusul.
+            (Fase 1+). Chart &amp; tabel menyusul.
           </p>
-        </div>
+        </Card>
       </div>
     </div>
   );
