@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient, signIn } from "@/lib/auth-client";
 import { homeForRole } from "@/lib/roles";
+import { Button } from "@/components/ui/loading";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -68,13 +69,9 @@ export default function LoginPage() {
           placeholder="••••••••"
         />
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full rounded-lg bg-brand-dark py-2.5 font-medium text-white transition hover:opacity-90 disabled:opacity-60"
-        >
+        <Button type="submit" loading={loading} className="w-full">
           {loading ? "Memproses…" : "Masuk"}
-        </button>
+        </Button>
       </form>
     </main>
   );
