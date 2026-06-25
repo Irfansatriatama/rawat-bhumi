@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Megaphone } from "lucide-react";
+import { Card, IconChip } from "@/components/ui/primitives";
 
 export function AnnouncementForm() {
   const router = useRouter();
@@ -27,13 +29,20 @@ export function AnnouncementForm() {
   }
 
   return (
-    <form onSubmit={submit} className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
-      <h2 className="mb-4 font-semibold text-brand-dark">Buat Pengumuman</h2>
-      <input className={`${input} mb-3`} placeholder="Judul" value={title} onChange={(e) => setTitle(e.target.value)} required />
-      <textarea className={`${input} min-h-20`} placeholder="Isi pengumuman" value={body} onChange={(e) => setBody(e.target.value)} required />
-      <button disabled={loading} className="mt-4 rounded-lg bg-brand-dark px-5 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-60">
-        {loading ? "…" : "Terbitkan"}
-      </button>
-    </form>
+    <Card className="p-5">
+      <form onSubmit={submit}>
+        <div className="mb-4 flex items-center gap-3">
+          <IconChip icon={Megaphone} tone="teal" size={36} />
+          <h2 className="font-semibold text-brand-dark">Buat Pengumuman</h2>
+        </div>
+        <label className="mb-1 block text-sm font-medium text-gray-700">Judul</label>
+        <input className={`${input} mb-3`} placeholder="Judul" value={title} onChange={(e) => setTitle(e.target.value)} required />
+        <label className="mb-1 block text-sm font-medium text-gray-700">Isi pengumuman</label>
+        <textarea className={`${input} min-h-20`} placeholder="Isi pengumuman" value={body} onChange={(e) => setBody(e.target.value)} required />
+        <button disabled={loading} className="mt-4 rounded-lg bg-brand-dark px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60">
+          {loading ? "…" : "Terbitkan"}
+        </button>
+      </form>
+    </Card>
   );
 }

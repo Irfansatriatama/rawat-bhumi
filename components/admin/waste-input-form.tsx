@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Scale, Inbox } from "lucide-react";
+import { Card, IconChip, EmptyState } from "@/components/ui/primitives";
 
 type Opt = { id: string; label: string };
 
@@ -39,18 +41,23 @@ export function WasteInputForm({ requestOptions, ksatriaOptions }: { requestOpti
 
   if (requestOptions.length === 0) {
     return (
-      <div className="rounded-2xl bg-white p-5 text-sm text-gray-500 shadow-sm ring-1 ring-black/5">
-        Belum ada pickup request terkonfirmasi untuk ditimbang. Warga perlu konfirmasi hadir dulu,
-        atau buat jadwal & request lebih dahulu.
-      </div>
+      <EmptyState
+        icon={Inbox}
+        title="Belum ada pickup request untuk ditimbang"
+        hint="Belum ada pickup request terkonfirmasi. Warga perlu konfirmasi hadir dulu, atau buat jadwal & request lebih dahulu."
+      />
     );
   }
 
   return (
-    <form onSubmit={submit} className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
-      <h2 className="mb-4 font-semibold text-brand-dark">Input Timbangan (manual)</h2>
+    <Card className="p-5">
+      <form onSubmit={submit}>
+      <div className="mb-4 flex items-center gap-3">
+        <IconChip icon={Scale} tone="green" size={36} />
+        <h2 className="font-semibold text-brand-dark">Input Timbangan (manual)</h2>
+      </div>
       {msg && (
-        <p className={`mb-3 rounded-lg px-3 py-2 text-sm ${msg.ok ? "bg-green-50 text-brand-dark" : "bg-red-50 text-brand-red"}`}>
+        <p className={`mb-3 rounded-lg px-3 py-2 text-sm ${msg.ok ? "bg-brand-soft text-brand-600" : "bg-red-50 text-brand-red"}`}>
           {msg.text}
         </p>
       )}
@@ -72,9 +79,10 @@ export function WasteInputForm({ requestOptions, ksatriaOptions }: { requestOpti
         <input className={input} type="number" min={0} placeholder="Residu (gram)" value={f.residu} onChange={(e) => up("residu", e.target.value)} />
         <input className={input} type="number" min={0} placeholder="B3 (gram)" value={f.b3} onChange={(e) => up("b3", e.target.value)} />
       </div>
-      <button disabled={loading} className="mt-4 rounded-lg bg-brand-dark px-5 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-60">
+      <button disabled={loading} className="mt-4 rounded-lg bg-brand-dark px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60">
         {loading ? "Menyimpan…" : "Simpan timbangan"}
       </button>
-    </form>
+      </form>
+    </Card>
   );
 }

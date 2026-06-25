@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { CalendarPlus } from "lucide-react";
 import { TIME_SLOTS } from "@/lib/format";
+import { Card, IconChip } from "@/components/ui/primitives";
 
 type Opt = { id: string; label: string };
 
@@ -33,8 +35,12 @@ export function PickupCreateForm({ rtOptions, ksatriaOptions }: { rtOptions: Opt
   }
 
   return (
-    <form onSubmit={submit} className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
-      <h2 className="mb-4 font-semibold text-brand-dark">Buat Jadwal Pickup</h2>
+    <Card className="p-5">
+      <form onSubmit={submit}>
+      <div className="mb-4 flex items-center gap-3">
+        <IconChip icon={CalendarPlus} tone="teal" size={36} />
+        <h2 className="font-semibold text-brand-dark">Buat Jadwal Pickup</h2>
+      </div>
       {msg && <p className="mb-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-brand-red">{msg}</p>}
       <div className="flex flex-wrap items-end gap-3">
         <select className={input} value={rtId} onChange={(e) => setRtId(e.target.value)} required>
@@ -55,10 +61,11 @@ export function PickupCreateForm({ rtOptions, ksatriaOptions }: { rtOptions: Opt
             <option key={o.id} value={o.id}>{o.label}</option>
           ))}
         </select>
-        <button disabled={loading} className="rounded-lg bg-brand-dark px-5 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-60">
+        <button disabled={loading} className="rounded-lg bg-brand-dark px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60">
           {loading ? "…" : "Buat"}
         </button>
       </div>
-    </form>
+      </form>
+    </Card>
   );
 }

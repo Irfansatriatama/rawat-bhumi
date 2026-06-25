@@ -19,7 +19,7 @@ export function ContentPublishToggle({ id, isPublished }: { id: string; isPublis
         setLoading(false);
         router.refresh();
       }}
-      className={`rounded px-2 py-1 text-xs font-medium ${isPublished ? "bg-green-100 text-brand-dark" : "bg-gray-100 text-gray-500"}`}
+      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium transition disabled:opacity-60 ${isPublished ? "bg-brand-soft text-brand-600" : "bg-slate-100 text-slate-600"}`}
     >
       {loading ? "…" : isPublished ? "Published" : "Draft"}
     </button>

@@ -19,7 +19,7 @@ export function GenerateInvoicesButton() {
           setMsg(res.ok ? `${d.created} tagihan dibuat (${d.period})` : d.error ?? "Gagal");
           router.refresh();
         }}
-        className="rounded-lg bg-brand-dark px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-60"
+        className="rounded-lg bg-brand-dark px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60"
       >
         {loading ? "…" : "Generate Tagihan Bulan Ini"}
       </button>
@@ -40,7 +40,7 @@ export function VerifyPaymentButton({ paymentId }: { paymentId: string }) {
         setLoading(false);
         router.refresh();
       }}
-      className="rounded bg-brand px-2 py-1 text-xs font-medium text-brand-dark disabled:opacity-60"
+      className="rounded-full bg-brand px-2.5 py-1 text-[11px] font-medium text-brand-dark transition hover:opacity-90 disabled:opacity-60"
     >
       {loading ? "…" : "Verifikasi"}
     </button>

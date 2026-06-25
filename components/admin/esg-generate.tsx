@@ -31,7 +31,7 @@ export function EsgGenerate() {
           setMsg(res.ok ? "Laporan dibuat." : "Gagal.");
           router.refresh();
         }}
-        className="rounded-lg bg-brand-dark px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-60"
+        className="rounded-lg bg-brand-dark px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60"
       >
         {loading ? "Membuat…" : "Generate Laporan ESG"}
       </button>

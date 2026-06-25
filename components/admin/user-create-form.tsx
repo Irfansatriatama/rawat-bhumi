@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { UserPlus } from "lucide-react";
 import { USER_ROLE } from "@/lib/prisma-enums";
+import { Card, IconChip } from "@/components/ui/primitives";
 
 type RtOption = { id: string; label: string };
 
@@ -58,49 +60,78 @@ export function UserCreateForm({ rtOptions }: { rtOptions: RtOption[] }) {
   const input = "w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand";
 
   return (
-    <form onSubmit={submit} className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
-      <h2 className="mb-4 font-semibold text-brand-dark">Tambah User</h2>
+    <Card className="p-5">
+      <form onSubmit={submit}>
+      <div className="mb-4 flex items-center gap-3">
+        <IconChip icon={UserPlus} tone="green" size={36} />
+        <h2 className="font-semibold text-brand-dark">Tambah User</h2>
+      </div>
       {msg && (
         <p
           className={`mb-3 rounded-lg px-3 py-2 text-sm ${
-            msg.ok ? "bg-green-50 text-brand-dark" : "bg-red-50 text-brand-red"
+            msg.ok ? "bg-brand-soft text-brand-600" : "bg-red-50 text-brand-red"
           }`}
         >
           {msg.text}
         </p>
       )}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <input className={input} placeholder="Nama" value={form.name} onChange={(e) => up("name", e.target.value)} required />
-        <input className={input} type="email" placeholder="Email" value={form.email} onChange={(e) => up("email", e.target.value)} required />
-        <input className={input} type="text" placeholder="Password sementara" value={form.password} onChange={(e) => up("password", e.target.value)} required minLength={8} />
-        <input className={input} placeholder="No. HP (opsional)" value={form.phone} onChange={(e) => up("phone", e.target.value)} />
-        <select className={input} value={form.role} onChange={(e) => up("role", e.target.value)}>
-          <option value={USER_ROLE.WARGA}>Warga</option>
-          <option value={USER_ROLE.KSATRIA_BHUMI}>Ksatria Bhumi</option>
-          <option value={USER_ROLE.ADMIN_RT}>Admin RT</option>
-        </select>
-        <select className={input} value={form.rtId} onChange={(e) => up("rtId", e.target.value)}>
-          <option value="">— Pilih RT —</option>
-          {rtOptions.map((rt) => (
-            <option key={rt.id} value={rt.id}>
-              {rt.label}
-            </option>
-          ))}
-        </select>
+        <div>
+          <label className="mb-1 block text-sm font-medium text-gray-700">Nama</label>
+          <input className={input} placeholder="Nama" value={form.name} onChange={(e) => up("name", e.target.value)} required />
+        </div>
+        <div>
+          <label className="mb-1 block text-sm font-medium text-gray-700">Email</label>
+          <input className={input} type="email" placeholder="Email" value={form.email} onChange={(e) => up("email", e.target.value)} required />
+        </div>
+        <div>
+          <label className="mb-1 block text-sm font-medium text-gray-700">Password sementara</label>
+          <input className={input} type="text" placeholder="Password sementara" value={form.password} onChange={(e) => up("password", e.target.value)} required minLength={8} />
+        </div>
+        <div>
+          <label className="mb-1 block text-sm font-medium text-gray-700">No. HP (opsional)</label>
+          <input className={input} placeholder="No. HP (opsional)" value={form.phone} onChange={(e) => up("phone", e.target.value)} />
+        </div>
+        <div>
+          <label className="mb-1 block text-sm font-medium text-gray-700">Role</label>
+          <select className={input} value={form.role} onChange={(e) => up("role", e.target.value)}>
+            <option value={USER_ROLE.WARGA}>Warga</option>
+            <option value={USER_ROLE.KSATRIA_BHUMI}>Ksatria Bhumi</option>
+            <option value={USER_ROLE.ADMIN_RT}>Admin RT</option>
+          </select>
+        </div>
+        <div>
+          <label className="mb-1 block text-sm font-medium text-gray-700">RT</label>
+          <select className={input} value={form.rtId} onChange={(e) => up("rtId", e.target.value)}>
+            <option value="">— Pilih RT —</option>
+            {rtOptions.map((rt) => (
+              <option key={rt.id} value={rt.id}>
+                {rt.label}
+              </option>
+            ))}
+          </select>
+        </div>
         {isKsatria && (
           <>
-            <input className={input} placeholder="ID Pegawai (employeeId)" value={form.employeeId} onChange={(e) => up("employeeId", e.target.value)} required />
-            <input className={input} placeholder="Kendaraan (mis. Viar Karya 200)" value={form.vehicleType} onChange={(e) => up("vehicleType", e.target.value)} />
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">ID Pegawai</label>
+              <input className={input} placeholder="ID Pegawai (employeeId)" value={form.employeeId} onChange={(e) => up("employeeId", e.target.value)} required />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">Kendaraan</label>
+              <input className={input} placeholder="Kendaraan (mis. Viar Karya 200)" value={form.vehicleType} onChange={(e) => up("vehicleType", e.target.value)} />
+            </div>
           </>
         )}
       </div>
       <button
         type="submit"
         disabled={loading}
-        className="mt-4 rounded-lg bg-brand-dark px-5 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-60"
+        className="mt-4 rounded-lg bg-brand-dark px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60"
       >
         {loading ? "Menyimpan…" : "Simpan"}
       </button>
-    </form>
+      </form>
+    </Card>
   );
 }
