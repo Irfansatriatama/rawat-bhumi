@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { UserPlus } from "lucide-react";
 import { USER_ROLE } from "@/lib/prisma-enums";
 import { Card, IconChip } from "@/components/ui/primitives";
+import { Button } from "@/components/ui/loading";
 
 type RtOption = { id: string; label: string };
 
@@ -124,13 +125,9 @@ export function UserCreateForm({ rtOptions }: { rtOptions: RtOption[] }) {
           </>
         )}
       </div>
-      <button
-        type="submit"
-        disabled={loading}
-        className="mt-4 rounded-lg bg-brand-dark px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60"
-      >
-        {loading ? "Menyimpan…" : "Simpan"}
-      </button>
+      <Button type="submit" loading={loading} className="mt-4">
+        Simpan
+      </Button>
       </form>
     </Card>
   );

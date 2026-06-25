@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { CalendarPlus } from "lucide-react";
 import { TIME_SLOTS } from "@/lib/format";
 import { Card, IconChip } from "@/components/ui/primitives";
+import { Button } from "@/components/ui/loading";
 
 type Opt = { id: string; label: string };
 
@@ -61,9 +62,9 @@ export function PickupCreateForm({ rtOptions, ksatriaOptions }: { rtOptions: Opt
             <option key={o.id} value={o.id}>{o.label}</option>
           ))}
         </select>
-        <button disabled={loading} className="rounded-lg bg-brand-dark px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60">
-          {loading ? "…" : "Buat"}
-        </button>
+        <Button type="submit" loading={loading}>
+          Buat
+        </Button>
       </div>
       </form>
     </Card>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ShieldCheck } from "lucide-react";
 import { Card, IconChip, StatusBadge } from "@/components/ui/primitives";
+import { Spinner } from "@/components/ui/loading";
 
 type Perm = { key: string; group: string; description: string };
 type Profile = { id: string; name: string; email: string; role: string };
@@ -13,6 +14,7 @@ export function PbacOverrideManager({ profiles, permissions }: { profiles: Profi
   const [template, setTemplate] = useState<string[]>([]);
   const [overrides, setOverrides] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const [pendingKey, setPendingKey] = useState<string | null>(null);
 
   async function load(id: string) {
     setProfileId(id);
@@ -34,20 +36,25 @@ export function PbacOverrideManager({ profiles, permissions }: { profiles: Profi
   }
 
   async function setEffect(key: string, effect: "GRANT" | "DENY" | "DEFAULT") {
-    if (effect === "DEFAULT") {
-      await fetch(`/api/permissions/overrides?profileId=${profileId}&permissionKey=${key}`, { method: "DELETE" });
-      setOverrides((o) => {
-        const n = { ...o };
-        delete n[key];
-        return n;
-      });
-    } else {
-      await fetch("/api/permissions/overrides", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ profileId, permissionKey: key, effect }),
-      });
-      setOverrides((o) => ({ ...o, [key]: effect }));
+    setPendingKey(key);
+    try {
+      if (effect === "DEFAULT") {
+        await fetch(`/api/permissions/overrides?profileId=${profileId}&permissionKey=${key}`, { method: "DELETE" });
+        setOverrides((o) => {
+          const n = { ...o };
+          delete n[key];
+          return n;
+        });
+      } else {
+        await fetch("/api/permissions/overrides", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ profileId, permissionKey: key, effect }),
+        });
+        setOverrides((o) => ({ ...o, [key]: effect }));
+      }
+    } finally {
+      setPendingKey(null);
     }
   }
 
@@ -55,7 +62,7 @@ export function PbacOverrideManager({ profiles, permissions }: { profiles: Profi
     overrides[key] === "DENY" ? false : overrides[key] === "GRANT" ? true : template.includes(key);
 
   const btn = (active: boolean, color: string) =>
-    `rounded-lg px-2.5 py-1 text-xs font-medium transition ${active ? color : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`;
+    `inline-flex items-center justify-center gap-1 rounded-lg px-2.5 py-1 text-xs font-medium transition disabled:opacity-60 ${active ? color : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`;
 
   return (
     <Card className="p-5">
@@ -114,13 +121,16 @@ export function PbacOverrideManager({ profiles, permissions }: { profiles: Profi
                     </td>
                     <td className="py-2 pr-4">
                       <div className="flex gap-1">
-                        <button onClick={() => setEffect(p.key, "DEFAULT")} className={btn(!ov, "bg-brand-dark text-white")}>
+                        <button disabled={pendingKey === p.key} onClick={() => setEffect(p.key, "DEFAULT")} className={btn(!ov, "bg-brand-dark text-white")}>
+                          {pendingKey === p.key && <Spinner size={12} />}
                           Default
                         </button>
-                        <button onClick={() => setEffect(p.key, "GRANT")} className={btn(ov === "GRANT", "bg-brand text-brand-dark")}>
+                        <button disabled={pendingKey === p.key} onClick={() => setEffect(p.key, "GRANT")} className={btn(ov === "GRANT", "bg-brand text-brand-dark")}>
+                          {pendingKey === p.key && <Spinner size={12} />}
                           Grant
                         </button>
-                        <button onClick={() => setEffect(p.key, "DENY")} className={btn(ov === "DENY", "bg-brand-red text-white")}>
+                        <button disabled={pendingKey === p.key} onClick={() => setEffect(p.key, "DENY")} className={btn(ov === "DENY", "bg-brand-red text-white")}>
+                          {pendingKey === p.key && <Spinner size={12} />}
                           Deny
                         </button>
                       </div>

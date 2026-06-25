@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Truck } from "lucide-react";
 import { WASTE_CATEGORY, CATEGORY_TO_PARTNER } from "@/lib/prisma-enums";
 import { Card, IconChip } from "@/components/ui/primitives";
+import { Button } from "@/components/ui/loading";
 
 type Partner = { id: string; name: string; type: string };
 
@@ -71,9 +72,9 @@ export function DeliveryCreateForm({ partners }: { partners: Partner[] }) {
           </select>
           <input className={input} type="number" step="0.01" min={0} placeholder="Berat (kg)" value={weightKg} onChange={(e) => setWeightKg(e.target.value)} required />
           <input className={input} type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
-          <button disabled={loading} className="rounded-lg bg-brand-dark px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60">
-            {loading ? "…" : "Catat"}
-          </button>
+          <Button type="submit" loading={loading}>
+            Catat
+          </Button>
         </div>
         <p className="mt-2 text-xs text-gray-500">
           Routing divalidasi: B3 hanya ke pengelola B3, organik ke processor, dst.

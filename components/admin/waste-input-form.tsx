@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Scale, Inbox } from "lucide-react";
 import { Card, IconChip, EmptyState } from "@/components/ui/primitives";
+import { Button } from "@/components/ui/loading";
 
 type Opt = { id: string; label: string };
 
@@ -79,9 +80,9 @@ export function WasteInputForm({ requestOptions, ksatriaOptions }: { requestOpti
         <input className={input} type="number" min={0} placeholder="Residu (gram)" value={f.residu} onChange={(e) => up("residu", e.target.value)} />
         <input className={input} type="number" min={0} placeholder="B3 (gram)" value={f.b3} onChange={(e) => up("b3", e.target.value)} />
       </div>
-      <button disabled={loading} className="mt-4 rounded-lg bg-brand-dark px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60">
-        {loading ? "Menyimpan…" : "Simpan timbangan"}
-      </button>
+      <Button type="submit" loading={loading} className="mt-4">
+        Simpan timbangan
+      </Button>
       </form>
     </Card>
   );

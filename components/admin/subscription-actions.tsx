@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button, Spinner } from "@/components/ui/loading";
 
 export function GenerateInvoicesButton() {
   const router = useRouter();
@@ -9,8 +10,8 @@ export function GenerateInvoicesButton() {
   const [msg, setMsg] = useState<string | null>(null);
   return (
     <div className="flex items-center gap-3">
-      <button
-        disabled={loading}
+      <Button
+        loading={loading}
         onClick={async () => {
           setLoading(true);
           const res = await fetch("/api/subscriptions/generate", { method: "POST" });
@@ -19,10 +20,9 @@ export function GenerateInvoicesButton() {
           setMsg(res.ok ? `${d.created} tagihan dibuat (${d.period})` : d.error ?? "Gagal");
           router.refresh();
         }}
-        className="rounded-lg bg-brand-dark px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60"
       >
-        {loading ? "…" : "Generate Tagihan Bulan Ini"}
-      </button>
+        Generate Tagihan Bulan Ini
+      </Button>
       {msg && <span className="text-sm text-gray-500">{msg}</span>}
     </div>
   );
@@ -40,9 +40,10 @@ export function VerifyPaymentButton({ paymentId }: { paymentId: string }) {
         setLoading(false);
         router.refresh();
       }}
-      className="rounded-full bg-brand px-2.5 py-1 text-[11px] font-medium text-brand-dark transition hover:opacity-90 disabled:opacity-60"
+      className="inline-flex items-center justify-center gap-1 rounded-full bg-brand px-2.5 py-1 text-[11px] font-medium text-brand-dark transition hover:opacity-90 disabled:opacity-60"
     >
-      {loading ? "…" : "Verifikasi"}
+      {loading && <Spinner size={12} />}
+      Verifikasi
     </button>
   );
 }

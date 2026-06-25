@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { currentPeriod } from "@/lib/format";
+import { Button } from "@/components/ui/loading";
 
 export function EsgGenerate() {
   const router = useRouter();
@@ -18,8 +19,8 @@ export function EsgGenerate() {
         onChange={(e) => setPeriod(e.target.value)}
         placeholder="YYYY-MM"
       />
-      <button
-        disabled={loading}
+      <Button
+        loading={loading}
         onClick={async () => {
           setLoading(true);
           const res = await fetch("/api/reports/esg", {
@@ -31,10 +32,9 @@ export function EsgGenerate() {
           setMsg(res.ok ? "Laporan dibuat." : "Gagal.");
           router.refresh();
         }}
-        className="rounded-lg bg-brand-dark px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60"
       >
-        {loading ? "Membuat…" : "Generate Laporan ESG"}
-      </button>
+        Generate Laporan ESG
+      </Button>
       {msg && <span className="text-sm text-gray-500">{msg}</span>}
     </div>
   );

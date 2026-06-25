@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { BookOpen } from "lucide-react";
 import { CONTENT_CATEGORY } from "@/lib/prisma-enums";
 import { Card, IconChip } from "@/components/ui/primitives";
+import { Button } from "@/components/ui/loading";
 
 const empty = { title: "", slug: "", category: CONTENT_CATEGORY.PILAH_SAMPAH as string, summary: "", content: "", isPublished: true };
 
@@ -68,9 +69,9 @@ export function ContentForm() {
           <input type="checkbox" checked={f.isPublished} onChange={(e) => up("isPublished", e.target.checked)} />
           Langsung publish
         </label>
-        <button disabled={loading} className="mt-4 rounded-lg bg-brand-dark px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60">
-          {loading ? "Menyimpan…" : "Simpan"}
-        </button>
+        <Button type="submit" loading={loading} className="mt-4">
+          Simpan
+        </Button>
       </form>
     </Card>
   );

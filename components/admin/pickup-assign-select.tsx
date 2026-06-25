@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Spinner } from "@/components/ui/loading";
 
 type Opt = { id: string; label: string };
 
@@ -31,16 +32,19 @@ export function PickupAssignSelect({
   }
 
   return (
-    <select
-      value={val}
-      onChange={(e) => change(e.target.value)}
-      disabled={saving}
-      className="rounded-lg border border-gray-300 px-2 py-1 text-xs outline-none focus:border-brand"
-    >
-      <option value="">— belum —</option>
-      {ksatriaOptions.map((o) => (
-        <option key={o.id} value={o.id}>{o.label}</option>
-      ))}
-    </select>
+    <span className="inline-flex items-center gap-1.5">
+      <select
+        value={val}
+        onChange={(e) => change(e.target.value)}
+        disabled={saving}
+        className="rounded-lg border border-gray-300 px-2 py-1 text-xs outline-none focus:border-brand"
+      >
+        <option value="">— belum —</option>
+        {ksatriaOptions.map((o) => (
+          <option key={o.id} value={o.id}>{o.label}</option>
+        ))}
+      </select>
+      {saving && <Spinner size={14} className="text-brand-600" />}
+    </span>
   );
 }

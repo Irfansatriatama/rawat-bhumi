@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Megaphone } from "lucide-react";
 import { Card, IconChip } from "@/components/ui/primitives";
+import { Button } from "@/components/ui/loading";
 
 export function AnnouncementForm() {
   const router = useRouter();
@@ -39,9 +40,9 @@ export function AnnouncementForm() {
         <input className={`${input} mb-3`} placeholder="Judul" value={title} onChange={(e) => setTitle(e.target.value)} required />
         <label className="mb-1 block text-sm font-medium text-gray-700">Isi pengumuman</label>
         <textarea className={`${input} min-h-20`} placeholder="Isi pengumuman" value={body} onChange={(e) => setBody(e.target.value)} required />
-        <button disabled={loading} className="mt-4 rounded-lg bg-brand-dark px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60">
-          {loading ? "…" : "Terbitkan"}
-        </button>
+        <Button type="submit" loading={loading} className="mt-4">
+          Terbitkan
+        </Button>
       </form>
     </Card>
   );
