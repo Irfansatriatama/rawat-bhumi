@@ -50,3 +50,9 @@ body {
   .press { transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1); }
   .press:active { transform: scale(0.97); }
 }
+
+/* transisi lembut antar-slide pada splash/onboarding */
+@keyframes fade {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
