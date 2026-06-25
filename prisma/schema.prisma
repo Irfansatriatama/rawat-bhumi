@@ -1,0 +1,596 @@
+// Rawat Bhumi — Prisma schema
+// Aturan proyek (lihat AGENTS.md):
+//  - relationMode = "prisma"  → TANPA FK constraint di DB
+//  - TANPA `enum`             → semua status/tipe/kategori = String + konstanta di lib/prisma-enums.ts
+//  - WAJIB @@index di tiap scalar relasi (tak ada FK = tak ada auto-index)
+//  - Migrasi HANYA via: npx prisma migrate dev --name <deskriptif>
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "postgresql"
+  relationMode = "prisma"
+  // Prisma 7: connection URL pindah ke prisma.config.ts (datasource.url),
+  // runtime pakai driver adapter @prisma/adapter-pg (lihat lib/db.ts).
+}
+
+// ============================================================
+// BETTER AUTH (schema standar). Relasi pakai onDelete: Cascade
+// yang DIEMULASI Prisma (relationMode=prisma) → bukan FK DB.
+// Jangan extend tabel `user` untuk data domain — pakai UserProfile.
+// ============================================================
+model User {
+  id            String    @id
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("verification")
+}
+
+// ============================================================
+// USER PROFILE — data domain, linked by userId (TANPA relasi ke User)
+// ============================================================
+model UserProfile {
+  id            String   @id @default(cuid())
+  userId        String   @unique // ref ke User.id (tanpa FK)
+  role          String   @default("WARGA") // USER_ROLE
+  rtId          String?
+  rt            RT?      @relation(fields: [rtId], references: [id])
+  phone         String?
+  address       String?
+  avatarUrl     String?
+  totalPoints   Int      @default(0)
+  isActive      Boolean  @default(true)
+  isProvisional Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  pickupRequests PickupRequest[]
+  wasteRecords   WasteRecord[]
+  pointHistory   PointHistory[]
+  subscription   Subscription?
+  ksatriaProfile KsatriaProfile?
+  overrides      UserPermissionOverride[]
+
+  @@index([rtId])
+  @@index([role])
+  @@map("user_profiles")
+}
+
+// ============================================================
+// WILAYAH
+// ============================================================
+model Kelurahan {
+  id        String   @id @default(cuid())
+  name      String
+  kota      String
+  rws       RW[]
+  createdAt DateTime @default(now())
+
+  @@map("kelurahans")
+}
+
+model RW {
+  id          String    @id @default(cuid())
+  number      String
+  kelurahanId String
+  kelurahan   Kelurahan @relation(fields: [kelurahanId], references: [id])
+  rts         RT[]
+  createdAt   DateTime  @default(now())
+
+  @@index([kelurahanId])
+  @@map("rws")
+}
+
+model RT {
+  id              String           @id @default(cuid())
+  number          String
+  rwId            String
+  rw              RW               @relation(fields: [rwId], references: [id])
+  totalKK         Int              @default(0)
+  userProfiles    UserProfile[]
+  pickupSchedules PickupSchedule[]
+  communityStats  CommunityStats[]
+  createdAt       DateTime         @default(now())
+
+  @@index([rwId])
+  @@map("rts")
+}
+
+// ============================================================
+// PICKUP
+// ============================================================
+model PickupSchedule {
+  id             String          @id @default(cuid())
+  rtId           String
+  rt             RT              @relation(fields: [rtId], references: [id])
+  ksatriaId      String?
+  ksatria        KsatriaProfile? @relation(fields: [ksatriaId], references: [id])
+  scheduledDate  DateTime
+  timeSlot       String
+  status         String          @default("SCHEDULED") // SCHEDULE_STATUS
+  notes          String?
+  pickupRequests PickupRequest[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@index([rtId])
+  @@index([ksatriaId])
+  @@index([status])
+  @@map("pickup_schedules")
+}
+
+model PickupRequest {
+  id           String         @id @default(cuid())
+  userId       String
+  userProfile  UserProfile    @relation(fields: [userId], references: [id])
+  scheduleId   String
+  schedule     PickupSchedule @relation(fields: [scheduleId], references: [id])
+  status       String         @default("PENDING") // PICKUP_STATUS
+  cancelReason String?
+  address      String
+  notes        String?
+  photoUrl     String?
+  confirmedAt  DateTime?
+  wasteRecord  WasteRecord?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@index([userId])
+  @@index([scheduleId])
+  @@index([status])
+  @@map("pickup_requests")
+}
+
+// ============================================================
+// WASTE RECORD
+// ============================================================
+model WasteRecord {
+  id              String         @id @default(cuid())
+  pickupRequestId String         @unique
+  pickupRequest   PickupRequest  @relation(fields: [pickupRequestId], references: [id])
+  userId          String
+  userProfile     UserProfile    @relation(fields: [userId], references: [id])
+  ksatriaId       String
+  ksatria         KsatriaProfile @relation(fields: [ksatriaId], references: [id])
+
+  organikGrams   Int @default(0)
+  anorganikGrams Int @default(0)
+  residuGrams    Int @default(0)
+  b3Grams        Int @default(0)
+  totalGrams     Int @default(0)
+
+  co2ReducedKg Float @default(0)
+  pointsEarned Int   @default(0)
+
+  photoBeforeUrl String?
+  photoAfterUrl  String?
+  weightPhotoUrl String?
+  overrideReason String?
+  syncStatus     String   @default("SYNCED") // SYNC_STATUS
+  recordedAt     DateTime @default(now())
+  createdAt      DateTime @default(now())
+
+  @@index([userId])
+  @@index([ksatriaId])
+  @@index([recordedAt])
+  @@map("waste_records")
+}
+
+// ============================================================
+// KSATRIA
+// ============================================================
+model KsatriaProfile {
+  id              String           @id @default(cuid())
+  userId          String           @unique
+  userProfile     UserProfile      @relation(fields: [userId], references: [id])
+  employeeId      String           @unique
+  vehicleType     String?
+  vehiclePlate    String?
+  uniformPhotoUrl String?
+  isOnDuty        Boolean          @default(false)
+  currentLat      Float?
+  currentLng      Float?
+  lastActiveAt    DateTime?
+  schedules       PickupSchedule[]
+  wasteRecords    WasteRecord[]
+  earnings        KsatriaEarning[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@map("ksatria_profiles")
+}
+
+model KsatriaEarning {
+  id          String         @id @default(cuid())
+  ksatriaId   String
+  ksatria     KsatriaProfile @relation(fields: [ksatriaId], references: [id])
+  period      String
+  pickupCount Int            @default(0)
+  totalWeight Int            @default(0)
+  baseAmount  Int            @default(0)
+  bonusAmount Int            @default(0)
+  totalAmount Int            @default(0)
+  paidAt      DateTime?
+  createdAt   DateTime       @default(now())
+
+  @@index([ksatriaId])
+  @@index([period])
+  @@map("ksatria_earnings")
+}
+
+// ============================================================
+// POINTS & REWARDS
+// ============================================================
+model PointHistory {
+  id          String      @id @default(cuid())
+  userId      String
+  userProfile UserProfile @relation(fields: [userId], references: [id])
+  points      Int
+  type        String // POINT_TYPE
+  description String
+  refId       String?
+  createdAt   DateTime    @default(now())
+
+  @@index([userId])
+  @@map("point_histories")
+}
+
+model Reward {
+  id          String             @id @default(cuid())
+  name        String
+  description String
+  imageUrl    String?
+  pointsCost  Int
+  stock       Int                @default(0)
+  isActive    Boolean            @default(true)
+  category    String?
+  redemptions RewardRedemption[]
+  createdAt   DateTime           @default(now())
+
+  @@map("rewards")
+}
+
+model RewardRedemption {
+  id         String   @id @default(cuid())
+  userId     String
+  rewardId   String
+  reward     Reward   @relation(fields: [rewardId], references: [id])
+  pointsUsed Int
+  status     String   @default("PENDING") // REDEMPTION_STATUS
+  redeemedAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([rewardId])
+  @@map("reward_redemptions")
+}
+
+// ============================================================
+// KOMUNITAS
+// ============================================================
+model CommunityStats {
+  id            String   @id @default(cuid())
+  rtId          String
+  rt            RT       @relation(fields: [rtId], references: [id])
+  period        String
+  activeKK      Int      @default(0)
+  totalWeightKg Float    @default(0)
+  totalCo2Kg    Float    @default(0)
+  rankInRW      Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([rtId, period])
+  @@index([period])
+  @@map("community_stats")
+}
+
+model Challenge {
+  id             String                   @id @default(cuid())
+  title          String
+  description    String
+  imageUrl       String?
+  startDate      DateTime
+  endDate        DateTime
+  targetType     String // CHALLENGE_TARGET
+  targetValue    Float
+  pointsReward   Int
+  isActive       Boolean                  @default(true)
+  participations ChallengeParticipation[]
+  createdAt      DateTime                 @default(now())
+
+  @@map("challenges")
+}
+
+model ChallengeParticipation {
+  id          String    @id @default(cuid())
+  userId      String
+  challengeId String
+  challenge   Challenge @relation(fields: [challengeId], references: [id])
+  progress    Float     @default(0)
+  isCompleted Boolean   @default(false)
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@unique([userId, challengeId])
+  @@index([challengeId])
+  @@map("challenge_participations")
+}
+
+// ============================================================
+// KONTEN EDUKASI & PENGUMUMAN
+// ============================================================
+model EducationContent {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  category    String // CONTENT_CATEGORY
+  summary     String
+  content     String
+  imageUrl    String?
+  videoUrl    String?
+  tags        String[]
+  isPublished Boolean   @default(false)
+  viewCount   Int       @default(0)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([category])
+  @@map("education_contents")
+}
+
+model CommunityEvent {
+  id          String    @id @default(cuid())
+  title       String
+  category    String // tag bebas, mis. "Gotong Royong" (bukan enum)
+  date        DateTime
+  timeLabel   String // mis. "07.00 WIB"
+  location    String
+  imageUrl    String?
+  rtId        String?
+  rwId        String?
+  isPublished Boolean   @default(true)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([date])
+  @@index([rwId])
+  @@map("community_events")
+}
+
+model Announcement {
+  id          String    @id @default(cuid())
+  title       String
+  body        String
+  targetRole  String? // USER_ROLE; null = semua
+  rtId        String?
+  isPublished Boolean   @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@map("announcements")
+}
+
+// ============================================================
+// SUBSCRIPTION / IURAN
+// ============================================================
+model Subscription {
+  id           String                @id @default(cuid())
+  userId       String                @unique
+  userProfile  UserProfile           @relation(fields: [userId], references: [id])
+  plan         String                @default("RUMAH_TANGGA") // SUBSCRIPTION_PLAN
+  status       String                @default("ACTIVE") // SUBSCRIPTION_STATUS
+  startDate    DateTime
+  nextBillDate DateTime
+  payments     SubscriptionPayment[]
+  createdAt    DateTime              @default(now())
+
+  @@map("subscriptions")
+}
+
+model SubscriptionPayment {
+  id             String       @id @default(cuid())
+  subscriptionId String
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
+  amount         Int
+  method         String
+  externalId     String?
+  status         String       @default("PENDING") // PAYMENT_STATUS
+  paidAt         DateTime?
+  createdAt      DateTime     @default(now())
+
+  @@index([subscriptionId])
+  @@index([status])
+  @@map("subscription_payments")
+}
+
+// ============================================================
+// PARTNER & HILIR (4 jalur)
+// ============================================================
+model Partner {
+  id               String          @id @default(cuid())
+  name             String
+  type             String // PARTNER_TYPE
+  contactName      String?
+  phone            String?
+  address          String?
+  capacityKgPerDay Int?
+  isActive         Boolean         @default(true)
+  notes            String?
+  deliveries       WasteDelivery[]
+  createdAt        DateTime        @default(now())
+
+  @@index([type])
+  @@map("partners")
+}
+
+model WasteDelivery {
+  id             String         @id @default(cuid())
+  partnerId      String
+  partner        Partner        @relation(fields: [partnerId], references: [id])
+  deliveryDate   DateTime
+  weightKg       Float
+  category       String // WASTE_CATEGORY (wajib cocok partner.type)
+  status         String         @default("DELIVERED") // DELIVERY_STATUS
+  receiptUrl     String?
+  notes          String?
+  revenueEntries RevenueEntry[]
+  createdAt      DateTime       @default(now())
+
+  @@index([partnerId])
+  @@index([category])
+  @@index([deliveryDate])
+  @@map("waste_deliveries")
+}
+
+model RevenueEntry {
+  id         String         @id @default(cuid())
+  source     String // REVENUE_SOURCE
+  type       String         @default("REVENUE") // ENTRY_TYPE
+  deliveryId String?
+  delivery   WasteDelivery? @relation(fields: [deliveryId], references: [id])
+  period     String
+  weightKg   Float?
+  unitPrice  Int?
+  amount     Int
+  note       String?
+  createdAt  DateTime       @default(now())
+
+  @@index([period])
+  @@index([source])
+  @@index([deliveryId])
+  @@map("revenue_entries")
+}
+
+// ============================================================
+// ESG REPORT
+// ============================================================
+model ESGReport {
+  id            String   @id @default(cuid())
+  period        String
+  totalWeightKg Float
+  organikKg     Float
+  anorganikKg   Float
+  residuKg      Float
+  b3Kg          Float    @default(0)
+  co2ReducedKg  Float
+  activeKK      Int
+  ksatriaCount  Int
+  revenueTotal  Int
+  costTotal     Int      @default(0)
+  narrative     String?
+  reportUrl     String?
+  generatedAt   DateTime @default(now())
+  generatedBy   String
+
+  @@index([period])
+  @@map("esg_reports")
+}
+
+// ============================================================
+// NOTIFICATION & PUSH
+// ============================================================
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  title     String
+  body      String
+  type      String // NOTIFICATION_TYPE
+  refId     String?
+  isRead    Boolean   @default(false)
+  sentAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+  @@index([isRead])
+  @@map("notifications")
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("push_subscriptions")
+}
+
+// ============================================================
+// PBAC
+// ============================================================
+model PermissionDef {
+  key         String @id
+  description String
+  group       String
+}
+
+model UserPermissionOverride {
+  id            String      @id @default(cuid())
+  userId        String
+  userProfile   UserProfile @relation(fields: [userId], references: [id])
+  permissionKey String
+  effect        String // "GRANT" | "DENY"
+  createdAt     DateTime    @default(now())
+
+  @@unique([userId, permissionKey])
+  @@index([userId])
+  @@map("user_permission_overrides")
+}

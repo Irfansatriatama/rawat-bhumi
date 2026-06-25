@@ -1,0 +1,139 @@
+// Konstanta pengganti `enum` Prisma (aturan proyek: DB pakai String).
+// TypeScript memberi type-safety mirip enum, DB tetap String.
+
+export const USER_ROLE = {
+  SUPER_ADMIN: "SUPER_ADMIN",
+  ADMIN_KELURAHAN: "ADMIN_KELURAHAN",
+  ADMIN_RT: "ADMIN_RT",
+  KSATRIA_BHUMI: "KSATRIA_BHUMI",
+  WARGA: "WARGA",
+} as const;
+export type UserRole = (typeof USER_ROLE)[keyof typeof USER_ROLE];
+
+export const SCHEDULE_STATUS = {
+  SCHEDULED: "SCHEDULED",
+  IN_PROGRESS: "IN_PROGRESS",
+  COMPLETED: "COMPLETED",
+  CANCELLED: "CANCELLED",
+} as const;
+
+export const PICKUP_STATUS = {
+  PENDING: "PENDING",
+  CONFIRMED: "CONFIRMED",
+  ON_THE_WAY: "ON_THE_WAY",
+  ARRIVED: "ARRIVED",
+  COMPLETED: "COMPLETED",
+  CANCELLED: "CANCELLED",
+} as const;
+
+export const SYNC_STATUS = {
+  SYNCED: "SYNCED",
+  PENDING_SYNC: "PENDING_SYNC",
+} as const;
+
+export const POINT_TYPE = {
+  PICKUP_COMPLETED: "PICKUP_COMPLETED",
+  WEIGHT_BONUS: "WEIGHT_BONUS",
+  CHALLENGE_COMPLETED: "CHALLENGE_COMPLETED",
+  REFERRAL_BONUS: "REFERRAL_BONUS",
+  REDEEMED: "REDEEMED",
+  ADMIN_ADJUSTMENT: "ADMIN_ADJUSTMENT",
+} as const;
+
+// ---- HILIR: kunci validasi routing 4 jalur ----
+export const WASTE_CATEGORY = {
+  ORGANIK: "ORGANIK",
+  ANORGANIK: "ANORGANIK",
+  RESIDU: "RESIDU",
+  B3: "B3",
+} as const;
+export type WasteCategory = (typeof WASTE_CATEGORY)[keyof typeof WASTE_CATEGORY];
+
+export const PARTNER_TYPE = {
+  ORGANIK_PROCESSOR: "ORGANIK_PROCESSOR",
+  RECYCLER: "RECYCLER",
+  PYROLYSIS: "PYROLYSIS",
+  B3_HANDLER: "B3_HANDLER",
+} as const;
+
+export const DELIVERY_STATUS = {
+  STORED: "STORED",
+  DELIVERED: "DELIVERED",
+  RECEIVED: "RECEIVED",
+} as const;
+
+export const REVENUE_SOURCE = {
+  MAGGOT: "MAGGOT",
+  PUPUK: "PUPUK",
+  CACAHAN_PLASTIK: "CACAHAN_PLASTIK",
+  IURAN: "IURAN",
+  COST_PIROLISIS: "COST_PIROLISIS",
+  COST_B3: "COST_B3",
+} as const;
+
+export const ENTRY_TYPE = {
+  REVENUE: "REVENUE",
+  COST: "COST",
+} as const;
+
+// Pemetaan routing sah: kategori sampah → tipe partner hilir.
+// Dipakai untuk memvalidasi WasteDelivery (B3 tak boleh nyasar ke maggot/cacah).
+export const CATEGORY_TO_PARTNER: Record<string, string> = {
+  [WASTE_CATEGORY.ORGANIK]: PARTNER_TYPE.ORGANIK_PROCESSOR,
+  [WASTE_CATEGORY.ANORGANIK]: PARTNER_TYPE.RECYCLER,
+  [WASTE_CATEGORY.RESIDU]: PARTNER_TYPE.PYROLYSIS,
+  [WASTE_CATEGORY.B3]: PARTNER_TYPE.B3_HANDLER,
+};
+
+export const SUBSCRIPTION_PLAN = {
+  RUMAH_TANGGA: "RUMAH_TANGGA",
+  PREMIUM: "PREMIUM",
+} as const;
+
+export const SUBSCRIPTION_STATUS = {
+  ACTIVE: "ACTIVE",
+  OVERDUE: "OVERDUE",
+  SUSPENDED: "SUSPENDED",
+  CANCELLED: "CANCELLED",
+} as const;
+
+export const PAYMENT_STATUS = {
+  PENDING: "PENDING",
+  PAID: "PAID",
+  FAILED: "FAILED",
+  EXPIRED: "EXPIRED",
+  REFUNDED: "REFUNDED",
+} as const;
+
+export const REDEMPTION_STATUS = {
+  PENDING: "PENDING",
+  APPROVED: "APPROVED",
+  REJECTED: "REJECTED",
+  FULFILLED: "FULFILLED",
+} as const;
+
+export const CONTENT_CATEGORY = {
+  PILAH_SAMPAH: "PILAH_SAMPAH",
+  ORGANIK: "ORGANIK",
+  ANORGANIK: "ANORGANIK",
+  RESIDU: "RESIDU",
+  B3: "B3",
+  MAGGOT_BSF: "MAGGOT_BSF",
+  LINGKUNGAN: "LINGKUNGAN",
+} as const;
+
+export const CHALLENGE_TARGET = {
+  WEIGHT_KG: "WEIGHT_KG",
+  PICKUP_COUNT: "PICKUP_COUNT",
+  PARTICIPATION_PCT: "PARTICIPATION_PCT",
+} as const;
+
+export const NOTIFICATION_TYPE = {
+  PICKUP_REMINDER: "PICKUP_REMINDER",
+  PICKUP_ON_THE_WAY: "PICKUP_ON_THE_WAY",
+  PICKUP_COMPLETED: "PICKUP_COMPLETED",
+  POINTS_EARNED: "POINTS_EARNED",
+  CHALLENGE_UPDATE: "CHALLENGE_UPDATE",
+  PAYMENT_DUE: "PAYMENT_DUE",
+  ANNOUNCEMENT: "ANNOUNCEMENT",
+} as const;
