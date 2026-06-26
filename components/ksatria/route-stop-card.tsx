@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   MapPin, Phone, Navigation, Scale, Truck, MapPinCheck,
@@ -94,23 +94,23 @@ export function RouteStopCard({ stop, index }: { stop: Stop; index: number }) {
           const reached = done || now;
           const Icon = s.icon;
           return (
-            <div key={s.label} className="flex flex-1 items-start">
+            <Fragment key={s.label}>
               <div className="flex w-0 flex-1 flex-col items-center text-center">
                 <span
-                  className={`grid h-8 w-8 place-items-center rounded-full ${
+                  className={`grid h-9 w-9 place-items-center rounded-full ${
                     reached ? "bg-brand-600 text-white" : "bg-brand-soft text-brand-600/40"
                   } ${now ? "ring-4 ring-brand-soft" : ""}`}
                 >
-                  <Icon size={15} strokeWidth={2.3} />
+                  <Icon size={16} strokeWidth={2.3} />
                 </span>
                 <span className={`mt-1.5 text-[10px] font-medium leading-tight ${reached ? "text-brand-dark" : "text-gray-400"}`}>
                   {s.label}
                 </span>
               </div>
               {i < STEPS.length - 1 && (
-                <span className={`mt-4 h-[3px] w-full -translate-x-1 rounded-full ${done ? "bg-brand-600" : "bg-brand-soft"}`} />
+                <span className={`mt-[16.5px] h-[3px] flex-1 rounded-full ${done ? "bg-brand-600" : "bg-brand-soft"}`} />
               )}
-            </div>
+            </Fragment>
           );
         })}
       </div>
