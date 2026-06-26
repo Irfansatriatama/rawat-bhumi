@@ -1,18 +1,19 @@
 import Link from "next/link";
 import {
   Bell, Truck, ChevronRight, Info, Check, MapPin, BadgeCheck,
-  Sprout, Recycle, Trash2, TriangleAlert, Trophy, Target, Users,
+  Sprout, Recycle, Trophy, Target, Users,
   Cloud, Package, Leaf, ArrowRight,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/session";
 import { tanggal } from "@/lib/format";
 import {
   SCHEDULE_STATUS, SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS, CONTENT_CATEGORY,
 } from "@/lib/prisma-enums";
+import { getDayActivity } from "@/lib/activity";
 import { Card } from "@/components/ui/primitives";
 import { LearnCarousel, type LearnItem } from "@/components/ui/learn-carousel";
+import { ActivityCard } from "@/components/beranda/activity-card";
 
 const PLAN_LABEL: Record<string, string> = {
   [SUBSCRIPTION_PLAN.RUMAH_TANGGA]: "Paket Rumah Tangga",
@@ -56,9 +57,8 @@ export default async function Beranda() {
     _sum: { totalGrams: true, organikGrams: true, anorganikGrams: true, b3Grams: true, co2ReducedKg: true },
     where: { userId: pid },
   });
-  const latest = pid
-    ? await prisma.wasteRecord.findFirst({ where: { userId: pid }, orderBy: { recordedAt: "desc" } })
-    : null;
+  // Aktivitas pilah hari ini (manual tap + auto dari pickup hari ini)
+  const todayActivity = pid ? await getDayActivity(pid) : [];
 
   // Pickup berikutnya untuk RT
   const nextSchedule = profile?.rtId
@@ -117,16 +117,6 @@ export default async function Beranda() {
   // Target bulanan: heuristik dari jumlah KK (belum ada model target khusus)
   const target = Math.max(1000, (profile?.rt?.totalKK ?? 0) * 4);
   const targetPct = Math.min(100, Math.round((myRtKg / target) * 100));
-
-  // Aktivitas saat ini — dari kategori pada setoran terakhir
-  const acts: { label: string; sub: string; icon: LucideIcon; done: boolean }[] = [
-    { label: "Organik", sub: "dijemput", icon: Sprout, done: (latest?.organikGrams ?? 0) > 0 },
-    { label: "Anorganik", sub: "diolah", icon: Recycle, done: (latest?.anorganikGrams ?? 0) > 0 },
-    { label: "Residu", sub: "dijadwalkan", icon: Trash2, done: (latest?.residuGrams ?? 0) > 0 },
-    { label: "B3 & E-Waste", sub: "dijadwalkan", icon: TriangleAlert, done: (latest?.b3Grams ?? 0) > 0 },
-  ];
-  const doneCount = acts.filter((a) => a.done).length;
-  const actPct = Math.round((doneCount / acts.length) * 100);
 
   // Stepper perjalanan sampah (tahap diturunkan dari ada/tidaknya setoran)
   const hasRecord = (agg._sum.totalGrams ?? 0) > 0;
@@ -267,46 +257,8 @@ export default async function Beranda() {
           )}
         </Card>
 
-        {/* ===== AKTIVITAS SAAT INI ===== */}
-        <Card className="p-4">
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-[13px] font-bold uppercase tracking-wide text-brand-dark">Aktivitas saat ini</h2>
-            <span className="text-xs font-semibold text-brand-600">{actPct}% selesai</span>
-          </div>
-          <div className="h-2 overflow-hidden rounded-full bg-brand-tint">
-            <div className="h-full rounded-full bg-gradient-to-r from-brand to-brand-dark" style={{ width: `${Math.max(4, actPct)}%` }} />
-          </div>
-          <div className="mt-4 grid grid-cols-4 gap-2 text-center">
-            {acts.map((a) => {
-              const Icon = a.icon;
-              return (
-                <div key={a.label} className="flex flex-col items-center gap-1.5">
-                  <span className="relative grid h-12 w-12 place-items-center rounded-2xl bg-brand-tint">
-                    <Icon size={22} className={a.done ? "text-brand-600" : "text-gray-400"} strokeWidth={1.8} />
-                    <span
-                      className={`absolute -right-1 -top-1 grid h-4 w-4 place-items-center rounded-full ${
-                        a.done ? "bg-brand-600 text-white" : "border-2 border-gray-200 bg-white"
-                      }`}
-                    >
-                      {a.done && <Check size={9} strokeWidth={3.5} />}
-                    </span>
-                  </span>
-                  <div>
-                    <p className="text-[11px] font-semibold leading-tight text-brand-dark">{a.label}</p>
-                    <p className="text-[10px] leading-tight text-gray-400">{a.done ? "tercatat" : a.sub}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <Link
-            href="/belajar"
-            className="press mt-4 flex items-center justify-between rounded-xl border border-brand-dark/8 px-3.5 py-2.5 text-sm font-medium text-brand-dark"
-          >
-            Lihat panduan pemilahan
-            <ChevronRight size={16} className="text-gray-400" />
-          </Link>
-        </Card>
+        {/* ===== AKTIVITAS HARI INI (interaktif: tap untuk catat) ===== */}
+        <ActivityCard initial={todayActivity} />
 
         {/* ===== BELAJAR 3 MENIT ===== */}
         {learnItems.length > 0 && (

@@ -60,6 +60,7 @@ async function ensureUser(email: string, name: string): Promise<string> {
 
 // ---------- reset domain (akun auth dipertahankan) ----------
 async function resetDomain() {
+  await prisma.dailySortLog.deleteMany();
   await prisma.revenueEntry.deleteMany();
   await prisma.wasteDelivery.deleteMany();
   await prisma.eSGReport.deleteMany();
@@ -619,6 +620,31 @@ async function main() {
       });
     }
   }
+
+  // ============================================================
+  // 14b) AKTIVITAS PILAH HARIAN (manual self-report warga)
+  // ============================================================
+  const dayKeyOf = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  const SORT_CATS = [WASTE_CATEGORY.ORGANIK, WASTE_CATEGORY.ANORGANIK, WASTE_CATEGORY.RESIDU, WASTE_CATEGORY.B3];
+  let sortLogCount = 0;
+  for (let wi = 0; wi < Math.min(8, warga.length); wi++) {
+    const w = warga[wi];
+    for (let off = 0; off < 12; off++) {
+      const date = daysAgo(off);
+      const key = dayKeyOf(date);
+      for (const cat of SORT_CATS) {
+        // warga demo (index 0): jaga streak organik 7 hari terakhir
+        const force = wi === 0 && off < 7 && cat === WASTE_CATEGORY.ORGANIK;
+        // hari ini hanya sebagian → masih ada yang bisa ditandai
+        const p = off === 0 ? 0.5 : 0.55;
+        if (force || rand() < p) {
+          await prisma.dailySortLog.create({ data: { userId: w.profileId, date: key, category: cat, createdAt: date } });
+          sortLogCount++;
+        }
+      }
+    }
+  }
+  console.log(`Aktivitas pilah harian: ${sortLogCount} log`);
 
   // ============================================================
   // 15) PBAC OVERRIDE (contoh): admin RT diberi akses lihat revenue hilir

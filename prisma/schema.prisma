@@ -574,6 +574,24 @@ model PushSubscription {
 }
 
 // ============================================================
+// AKTIVITAS PILAH HARIAN
+// Self-report warga (tap kategori) — digabung dgn auto dari WasteRecord
+// pada hari yang sama. Kunci hari pakai String "YYYY-MM-DD" (lokal).
+// ============================================================
+model DailySortLog {
+  id        String   @id @default(cuid())
+  userId    String // ref UserProfile.id (tanpa FK)
+  date      String // kunci hari lokal "YYYY-MM-DD"
+  category  String // WASTE_CATEGORY
+  createdAt DateTime @default(now())
+
+  @@unique([userId, date, category])
+  @@index([userId])
+  @@index([date])
+  @@map("daily_sort_logs")
+}
+
+// ============================================================
 // PBAC
 // ============================================================
 model PermissionDef {
