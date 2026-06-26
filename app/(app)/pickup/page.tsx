@@ -169,10 +169,10 @@ export default async function PickupPage() {
         <Card className="p-4">
           <SectionLabel>Panduan Sebelum Pickup</SectionLabel>
           <div className="mt-4 grid grid-cols-4 gap-2">
-            <Guide icon={Package} text="Pisahkan sampah sesuai kategori" href="/belajar" />
-            <Guide icon={Trash2} text="Gunakan kantong atau wadah tertutup" href="/belajar" />
-            <Guide icon={ClipboardCheck} text="Letakkan di lokasi yang mudah diakses" href="/belajar" />
-            <Guide icon={Clock} text="Pastikan sesuai jadwal pickup" href="/pickup/jadwal" />
+            <Guide icon={Package} text="Pisahkan sampah sesuai kategori" href="/pickup/panduan#kategori" />
+            <Guide icon={Trash2} text="Gunakan kantong atau wadah tertutup" href="/pickup/panduan#wadah" />
+            <Guide icon={ClipboardCheck} text="Letakkan di lokasi yang mudah diakses" href="/pickup/panduan#lokasi" />
+            <Guide icon={Clock} text="Pastikan sesuai jadwal pickup" href="/pickup/panduan#jadwal" />
           </div>
         </Card>
 
