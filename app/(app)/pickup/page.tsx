@@ -2,7 +2,7 @@ import Link from "next/link";
 import {
   Star, Info, ChevronRight, Truck, MapPinCheck, CircleCheck,
   Leaf, Recycle, Trash2, TriangleAlert, Phone, MessageCircle, Clock,
-  Package, ClipboardCheck,
+  ClipboardCheck,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { prisma } from "@/lib/db";
@@ -13,6 +13,7 @@ import { Card } from "@/components/ui/primitives";
 import { PickupHeader } from "@/components/app/pickup-header";
 import { PickupHeroActions } from "@/components/app/pickup-hero-actions";
 import { PickupInfoCard } from "@/components/app/pickup-info-card";
+import { PanduanPickup } from "@/components/app/panduan-pickup";
 
 const HARI = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 const BULAN = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
@@ -166,15 +167,7 @@ export default async function PickupPage() {
         <PickupInfoCard info={pickupInfo} wilayah={wil} jadwalLabel={tanggalPanjang(date)} />
 
         {/* ===== PANDUAN SEBELUM PICKUP ===== */}
-        <Card className="p-4">
-          <SectionLabel>Panduan Sebelum Pickup</SectionLabel>
-          <div className="mt-4 grid grid-cols-4 gap-2">
-            <Guide icon={Package} text="Pisahkan sampah sesuai kategori" href="/pickup/panduan#kategori" />
-            <Guide icon={Trash2} text="Gunakan kantong atau wadah tertutup" href="/pickup/panduan#wadah" />
-            <Guide icon={ClipboardCheck} text="Letakkan di lokasi yang mudah diakses" href="/pickup/panduan#lokasi" />
-            <Guide icon={Clock} text="Pastikan sesuai jadwal pickup" href="/pickup/panduan#jadwal" />
-          </div>
-        </Card>
+        <PanduanPickup />
 
         {/* ===== ESTIMASI SAMPAH ===== */}
         <Card className="p-4">
@@ -263,22 +256,6 @@ function StepLine({ done }: { done?: boolean }) {
   return <span className={`mt-5 h-[3px] flex-1 rounded-full ${done ? "bg-brand-600" : "bg-brand-soft"}`} />;
 }
 
-
-function Guide({ icon: Icon, text, href }: { icon: LucideIcon; text: string; href?: string }) {
-  const inner = (
-    <>
-      <span className="grid h-14 w-14 place-items-center rounded-2xl bg-brand-soft">
-        <Icon size={26} strokeWidth={1.8} className="text-brand-600" />
-      </span>
-      <p className="mt-2 text-[10.5px] font-medium leading-tight text-gray-500">{text}</p>
-    </>
-  );
-  return href ? (
-    <Link href={href} className="press flex flex-col items-center text-center">{inner}</Link>
-  ) : (
-    <div className="flex flex-col items-center text-center">{inner}</div>
-  );
-}
 
 function Est({ icon: Icon, label, value, color }: { icon: LucideIcon; label: string; value: string; color: string }) {
   return (
