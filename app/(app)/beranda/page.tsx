@@ -163,33 +163,32 @@ export default async function Beranda() {
   return (
     <div className="bg-brand-tint">
       {/* ===== TOPBAR ===== */}
-      <header className="sticky top-0 z-10 border-b border-brand-dark/5 bg-white/90 px-4 py-3 backdrop-blur-lg">
-        <div className="flex items-center justify-between gap-3">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-rawat-bhumi.png" alt="Rawat Bhumi" className="h-8 w-auto" />
-          <Link href="/akun" className="press relative grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand-tint">
-            <Bell size={18} className="text-brand-dark" />
-            {unread > 0 && (
-              <span className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-brand-red px-1 text-[10px] font-bold text-white">
-                {unread > 9 ? "9+" : unread}
-              </span>
+      <header className="sticky top-0 z-10 flex items-center gap-3 border-b border-brand-dark/5 bg-white/90 px-4 py-3 backdrop-blur-lg">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logo-rawat-bhumi.png" alt="Rawat Bhumi" className="h-11 w-auto shrink-0" />
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-[15px] font-bold text-brand-dark">Halo, {firstName}! 👋</p>
+          <p className="mt-0.5 flex items-center gap-1.5 truncate text-xs text-gray-500">
+            <span className="truncate">{sub ? PLAN_LABEL[sub.plan] ?? sub.plan : "Belum berlangganan"}</span>
+            {sub && (
+              <>
+                <span className="text-gray-300">•</span>
+                <span className={`inline-flex shrink-0 items-center gap-0.5 font-medium ${isActive ? "text-brand-600" : "text-brand-amber"}`}>
+                  {isActive ? "Aktif" : "Perlu bayar"}
+                  {isActive && <BadgeCheck size={12} className="fill-brand-600 text-white" />}
+                </span>
+              </>
             )}
-          </Link>
+          </p>
         </div>
-        <div className="mt-2 flex items-center gap-1.5 text-sm">
-          <span className="truncate font-bold text-brand-dark">Halo, {firstName} 👋</span>
-          <span className="text-gray-300">•</span>
-          <span className="truncate text-xs text-gray-500">
-            {sub ? PLAN_LABEL[sub.plan] ?? sub.plan : "Belum berlangganan"}
-          </span>
-          {sub && (
-            <span className={`inline-flex shrink-0 items-center gap-0.5 text-xs font-medium ${isActive ? "text-brand-600" : "text-brand-amber"}`}>
-              <span className="text-gray-300">•</span>
-              {isActive ? "Aktif" : "Perlu bayar"}
-              {isActive && <BadgeCheck size={12} className="fill-brand-600 text-white" />}
+        <Link href="/akun" className="press relative grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand-tint">
+          <Bell size={18} className="text-brand-dark" />
+          {unread > 0 && (
+            <span className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-brand-red px-1 text-[10px] font-bold text-white">
+              {unread > 9 ? "9+" : unread}
             </span>
           )}
-        </div>
+        </Link>
       </header>
 
       <div className="space-y-5 p-4 pb-6">
