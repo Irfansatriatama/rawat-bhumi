@@ -1,7 +1,7 @@
 import Link from "next/link";
 import {
-  ChevronRight, Scale, Truck, Coins, Leaf, CalendarDays, BadgeCheck,
-  Map, Wallet, IdCard, Phone, MessageCircle, AlertTriangle, Info, LogOut,
+  ChevronRight, Truck, Coins, Leaf, CalendarDays, BadgeCheck,
+  ClipboardList, Wallet, IdCard, Phone, MessageCircle, AlertTriangle, Info, LogOut,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { prisma } from "@/lib/db";
@@ -16,8 +16,7 @@ import { Card, EmptyState } from "@/components/ui/primitives";
 type Row = { icon: LucideIcon; label: string; href: string; value?: string; external?: boolean };
 
 const MENU_TUGAS: Row[] = [
-  { icon: Map, label: "Rute Pickup", href: "/ksatria/rute" },
-  { icon: Scale, label: "Input Timbangan", href: "/ksatria/timbang" },
+  { icon: ClipboardList, label: "Daftar Tugas", href: "/ksatria/tugas" },
   { icon: Wallet, label: "Penghasilan", href: "/ksatria/penghasilan" },
 ];
 const MENU_BANTUAN: Row[] = [

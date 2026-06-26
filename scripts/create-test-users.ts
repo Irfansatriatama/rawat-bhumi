@@ -61,7 +61,7 @@ async function main() {
 
   console.log("\n=== Akun testing ===");
   console.log("WARGA   :", WARGA_EMAIL, "/", PASSWORD, "→ /beranda");
-  console.log("KSATRIA :", KSATRIA_EMAIL, "/", PASSWORD, "→ /ksatria/dashboard");
+  console.log("KSATRIA :", KSATRIA_EMAIL, "/", PASSWORD, "→ /ksatria/beranda");
   await prisma.$disconnect();
 }
 

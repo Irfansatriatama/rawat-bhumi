@@ -685,7 +685,7 @@ async function main() {
   console.log("\n=== Seed selesai. Akun login (password: " + PASSWORD + ") ===");
   console.log("SUPER ADMIN : admin@rawatbhumi.id      → /admin/dashboard");
   console.log("ADMIN RT    : adminrt@rawatbhumi.id    → /admin/dashboard");
-  console.log("KSATRIA     : ksatria@rawatbhumi.id    → /ksatria/dashboard");
+  console.log("KSATRIA     : ksatria@rawatbhumi.id    → /ksatria/beranda");
   console.log("WARGA       : warga@rawatbhumi.id      → /beranda");
 }
 

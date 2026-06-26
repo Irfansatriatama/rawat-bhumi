@@ -75,6 +75,44 @@ export async function routeStopsForKsatria(ksatriaId: string): Promise<Stop[]> {
   }));
 }
 
+/** Detail satu tugas (pickup request) untuk halaman detail Ksatria. Null bila bukan tugasnya. */
+export async function getTaskDetail(requestId: string, ksatriaId: string) {
+  const req = await prisma.pickupRequest.findUnique({
+    where: { id: requestId },
+    include: {
+      schedule: { include: { rt: { include: { rw: { include: { kelurahan: true } } } } } },
+      wasteRecord: true,
+    },
+  });
+  if (!req || req.schedule.ksatriaId !== ksatriaId) return null;
+
+  const profile = await prisma.userProfile.findUnique({
+    where: { id: req.userId },
+    select: { userId: true, phone: true },
+  });
+  const user = profile
+    ? await prisma.user.findUnique({ where: { id: profile.userId }, select: { name: true } })
+    : null;
+
+  const rt = req.schedule.rt;
+  return {
+    id: req.id,
+    name: user?.name ?? "-",
+    phone: profile?.phone ?? null,
+    address: req.address,
+    instruction: req.instruction,
+    notes: req.notes,
+    status: req.status,
+    rt: rt.number,
+    rw: rt.rw.number,
+    kelurahan: rt.rw.kelurahan.name,
+    kota: rt.rw.kelurahan.kota,
+    date: req.schedule.scheduledDate,
+    timeSlot: req.schedule.timeSlot,
+    wasteRecord: req.wasteRecord,
+  };
+}
+
 /** Setoran yang sudah ditimbang Ksatria hari ini (recap). */
 export async function weighedTodayByKsatria(ksatriaId: string) {
   const { start, end } = todayBounds();

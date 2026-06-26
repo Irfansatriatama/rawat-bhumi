@@ -5,9 +5,8 @@ import { usePathname } from "next/navigation";
 import { Bell } from "lucide-react";
 
 const TITLES: { href: string; title: string }[] = [
-  { href: "/ksatria/dashboard", title: "Tugas" },
-  { href: "/ksatria/rute", title: "Rute" },
-  { href: "/ksatria/timbang", title: "Timbang" },
+  { href: "/ksatria/beranda", title: "Beranda" },
+  { href: "/ksatria/tugas", title: "Tugas" },
   { href: "/ksatria/penghasilan", title: "Penghasilan" },
   { href: "/ksatria/akun", title: "Akun" },
 ];

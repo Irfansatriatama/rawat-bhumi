@@ -9,6 +9,6 @@ export const ADMIN_ROLE_LIST: string[] = [
 
 export function homeForRole(role: string): string {
   if (ADMIN_ROLE_LIST.includes(role)) return "/admin/dashboard";
-  if (role === USER_ROLE.KSATRIA_BHUMI) return "/ksatria/dashboard";
+  if (role === USER_ROLE.KSATRIA_BHUMI) return "/ksatria/beranda";
   return "/beranda";
 }

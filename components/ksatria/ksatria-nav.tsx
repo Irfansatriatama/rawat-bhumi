@@ -2,13 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ClipboardList, Map, Scale, Wallet, User } from "lucide-react";
+import { Home, ClipboardList, Wallet, User } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 const TABS: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: "/ksatria/dashboard", label: "Tugas", icon: ClipboardList },
-  { href: "/ksatria/rute", label: "Rute", icon: Map },
-  { href: "/ksatria/timbang", label: "Timbang", icon: Scale },
+  { href: "/ksatria/beranda", label: "Beranda", icon: Home },
+  { href: "/ksatria/tugas", label: "Tugas", icon: ClipboardList },
   { href: "/ksatria/penghasilan", label: "Hasil", icon: Wallet },
   { href: "/ksatria/akun", label: "Akun", icon: User },
 ];

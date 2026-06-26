@@ -66,6 +66,7 @@ export async function updatePickupInfo(data: {
   revalidatePath("/pickup");
   revalidatePath("/akun");
   revalidatePath("/akun/alamat");
-  revalidatePath("/ksatria/rute");
+  revalidatePath("/ksatria/tugas");
+  revalidatePath("/ksatria/beranda");
   return { success: true };
 }
