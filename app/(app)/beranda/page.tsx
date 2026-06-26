@@ -165,7 +165,7 @@ export default async function Beranda() {
       {/* ===== TOPBAR ===== */}
       <header className="sticky top-0 z-10 flex items-center gap-3 border-b border-brand-dark/5 bg-white/90 px-4 py-3 backdrop-blur-lg">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo-rawat-bhumi.png" alt="Rawat Bhumi" className="h-11 w-auto shrink-0" />
+        <img src="/logo-rawat-bhumi.png" alt="Rawat Bhumi" className="h-[37px] w-auto shrink-0" />
         <div className="min-w-0 flex-1">
           <p className="truncate text-[15px] font-bold text-brand-dark">Halo, {firstName}! 👋</p>
           <p className="mt-0.5 flex items-center gap-1.5 truncate text-xs text-gray-500">
