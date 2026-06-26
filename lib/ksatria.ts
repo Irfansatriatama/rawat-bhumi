@@ -1,6 +1,8 @@
 import { prisma } from "./db";
 import { getSessionLike } from "./session";
 import { calcKsatriaEarning } from "./business-rules";
+import { PICKUP_STATUS, SCHEDULE_STATUS, NOTIFICATION_TYPE } from "./prisma-enums";
+import { sendPushToUser } from "./push";
 
 export async function getKsatriaProfile() {
   const session = await getSessionLike();
@@ -90,4 +92,81 @@ export async function weighedTodayByKsatria(ksatriaId: string) {
     totalGrams: r.totalGrams,
     recordedAt: r.recordedAt,
   }));
+}
+
+// Status yang boleh di-set Ksatria dari lapangan (COMPLETED otomatis saat timbang).
+const KSATRIA_SETTABLE = [PICKUP_STATUS.ON_THE_WAY, PICKUP_STATUS.ARRIVED] as string[];
+
+const STATUS_NOTIF: Record<string, { title: string; body: string; type: string }> = {
+  [PICKUP_STATUS.ON_THE_WAY]: {
+    title: "Kurir dalam perjalanan 🚚",
+    body: "Kurir sedang menuju lokasimu. Siapkan sampah terpilahmu ya.",
+    type: NOTIFICATION_TYPE.PICKUP_ON_THE_WAY,
+  },
+  [PICKUP_STATUS.ARRIVED]: {
+    title: "Kurir tiba di lokasi 📍",
+    body: "Kurir sudah sampai di titik pickup-mu.",
+    type: NOTIFICATION_TYPE.PICKUP_REMINDER,
+  },
+};
+
+/**
+ * Ksatria menandai progres penjemputan (ON_THE_WAY / ARRIVED).
+ * Verifikasi kepemilikan (request milik jadwal yang di-assign ke ksatria),
+ * lalu update status + notifikasi/push ke warga. Lempar Response untuk error.
+ */
+export async function setRequestStatusByKsatria(requestId: string, ksatriaId: string, status: string) {
+  if (!KSATRIA_SETTABLE.includes(status)) {
+    throw new Response("Status tidak valid", { status: 422 });
+  }
+  const req = await prisma.pickupRequest.findUnique({
+    where: { id: requestId },
+    include: { schedule: true },
+  });
+  if (!req) throw new Response("Pickup request tidak ditemukan", { status: 404 });
+  if (req.schedule.ksatriaId !== ksatriaId) throw new Response("Bukan tugasmu", { status: 403 });
+  if (req.status === PICKUP_STATUS.COMPLETED || req.status === PICKUP_STATUS.CANCELLED) {
+    throw new Response("Penjemputan sudah selesai", { status: 409 });
+  }
+
+  // Notification.userId = Better Auth user.id (bukan UserProfile.id).
+  const warga = await prisma.userProfile.findUnique({
+    where: { id: req.userId },
+    select: { userId: true },
+  });
+  const notif = STATUS_NOTIF[status];
+
+  await prisma.$transaction(async (tx) => {
+    await tx.pickupRequest.update({ where: { id: requestId }, data: { status } });
+    if (status === PICKUP_STATUS.ON_THE_WAY && req.schedule.status === SCHEDULE_STATUS.SCHEDULED) {
+      await tx.pickupSchedule.update({
+        where: { id: req.scheduleId },
+        data: { status: SCHEDULE_STATUS.IN_PROGRESS },
+      });
+    }
+    if (warga?.userId && notif) {
+      await tx.notification.create({
+        data: { userId: warga.userId, title: notif.title, body: notif.body, type: notif.type, refId: req.id },
+      });
+    }
+  });
+
+  if (warga?.userId && notif) {
+    await sendPushToUser(warga.userId, {
+      title: notif.title,
+      body: notif.body,
+      url: "/pickup/tracking",
+      refId: req.id,
+    }).catch(() => {});
+  }
+
+  return { id: req.id, status };
+}
+
+/** Toggle status bertugas Ksatria + perbarui lastActiveAt. */
+export async function setKsatriaDuty(ksatriaId: string, isOnDuty: boolean) {
+  return prisma.ksatriaProfile.update({
+    where: { id: ksatriaId },
+    data: { isOnDuty, lastActiveAt: new Date() },
+  });
 }

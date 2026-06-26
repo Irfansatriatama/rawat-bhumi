@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ClipboardList, Map, Scale, Wallet } from "lucide-react";
+import { ClipboardList, Map, Scale, Wallet, User } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 const TABS: { href: string; label: string; icon: LucideIcon }[] = [
@@ -10,6 +10,7 @@ const TABS: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/ksatria/rute", label: "Rute", icon: Map },
   { href: "/ksatria/timbang", label: "Timbang", icon: Scale },
   { href: "/ksatria/penghasilan", label: "Hasil", icon: Wallet },
+  { href: "/ksatria/akun", label: "Akun", icon: User },
 ];
 
 /** Bottom-nav ksatria — sejajar dengan BottomNav warga (ikon + state aktif). */
