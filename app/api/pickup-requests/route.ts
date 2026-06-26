@@ -26,6 +26,8 @@ export const POST = handle(async (req) => {
       scheduleId,
       status: PICKUP_STATUS.CONFIRMED,
       address: profile?.address ?? "-",
+      instruction: profile?.pickupInstruction ?? null,
+      notes: profile?.pickupNote ?? null,
     },
   });
   return Response.json(request, { status: 201 });

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import {
-  Star, Info, ChevronRight, Pencil, MapPin, ClipboardList,
-  AlarmClock, NotebookPen, Truck, MapPinCheck, CircleCheck,
+  Star, Info, ChevronRight, Truck, MapPinCheck, CircleCheck,
   Leaf, Recycle, Trash2, TriangleAlert, Phone, MessageCircle, Clock,
   Package, ClipboardCheck,
 } from "lucide-react";
@@ -13,6 +12,7 @@ import { SCHEDULE_STATUS } from "@/lib/prisma-enums";
 import { Card } from "@/components/ui/primitives";
 import { PickupHeader } from "@/components/app/pickup-header";
 import { PickupHeroActions } from "@/components/app/pickup-hero-actions";
+import { PickupInfoCard } from "@/components/app/pickup-info-card";
 
 const HARI = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 const BULAN = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
@@ -69,9 +69,12 @@ export default async function PickupPage() {
   const wil = profile?.rt
     ? `RT ${profile.rt.number} / RW ${profile.rt.rw.number}, Kel. ${profile.rt.rw.kelurahan.name}, ${profile.rt.rw.kelurahan.kota}`
     : "Kel. Cipete, Kec. Cipete, Jakarta Selatan";
-  const alamat = myRequest?.address ?? profile?.address ?? "Jl. Wijaya Kusuma No. 12, RT 05 / RW 02";
-  const instruksi = "Depan rumah, pagar hitam";
-  const catatan = myRequest?.notes ?? schedule?.notes ?? "Sampah di depan pagar sebelah kanan rumah 🙏";
+  // Informasi pickup: snapshot request (jika sudah konfirmasi) → default profil warga.
+  const pickupInfo = {
+    address: myRequest?.address ?? profile?.address ?? "",
+    instruction: myRequest?.instruction ?? profile?.pickupInstruction ?? "",
+    note: myRequest?.notes ?? profile?.pickupNote ?? schedule?.notes ?? "",
+  };
 
   // Countdown ke jadwal → badge "2H4" (server render, satu kali)
   // eslint-disable-next-line react-hooks/purity
@@ -160,30 +163,7 @@ export default async function PickupPage() {
         </Card>
 
         {/* ===== INFORMASI PICKUP ===== */}
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
-            <SectionLabel>Informasi Pickup</SectionLabel>
-            <Pencil size={16} className="text-gray-400" />
-          </div>
-
-          <div className="mt-3 flex items-start gap-3">
-            <MapPin size={20} className="mt-0.5 shrink-0 text-brand-600" />
-            <div>
-              <p className="text-sm font-semibold text-brand-dark">Alamat Pickup</p>
-              <p className="mt-0.5 text-[13px] leading-relaxed text-gray-500">
-                {alamat}
-                <br />
-                {wil}
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-1 divide-y divide-brand-dark/5 border-t border-brand-dark/5">
-            <InfoRow icon={ClipboardList} title="Instruksi Lokasi" value={instruksi} />
-            <InfoRow icon={AlarmClock} title="Jadwal Pickup" value={tanggalPanjang(date)} href="/pickup/jadwal" />
-            <InfoRow icon={NotebookPen} title="Catatan untuk Kurir" value={catatan} />
-          </div>
-        </Card>
+        <PickupInfoCard info={pickupInfo} wilayah={wil} jadwalLabel={tanggalPanjang(date)} />
 
         {/* ===== PANDUAN SEBELUM PICKUP ===== */}
         <Card className="p-4">
@@ -283,23 +263,6 @@ function StepLine({ done }: { done?: boolean }) {
   return <span className={`mt-5 h-[3px] flex-1 rounded-full ${done ? "bg-brand-600" : "bg-brand-soft"}`} />;
 }
 
-function InfoRow({ icon: Icon, title, value, href }: { icon: LucideIcon; title: string; value: string; href?: string }) {
-  const inner = (
-    <>
-      <Icon size={20} className="shrink-0 text-brand-600" />
-      <div className="min-w-0 flex-1">
-        <p className="text-sm font-semibold text-brand-dark">{title}</p>
-        <p className="truncate text-[13px] text-gray-500">{value}</p>
-      </div>
-      <ChevronRight size={18} className="shrink-0 text-gray-300" />
-    </>
-  );
-  return href ? (
-    <Link href={href} className="press flex items-center gap-3 py-3">{inner}</Link>
-  ) : (
-    <div className="flex items-center gap-3 py-3">{inner}</div>
-  );
-}
 
 function Guide({ icon: Icon, text, href }: { icon: LucideIcon; text: string; href?: string }) {
   const inner = (

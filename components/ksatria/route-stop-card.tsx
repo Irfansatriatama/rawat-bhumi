@@ -4,7 +4,7 @@ import { Fragment, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   MapPin, Phone, Navigation, Scale, Truck, MapPinCheck,
-  CircleCheck, BadgeCheck, AlertCircle,
+  CircleCheck, BadgeCheck, AlertCircle, ClipboardList, NotebookPen,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { tanggal } from "@/lib/format";
@@ -16,6 +16,8 @@ export type Stop = {
   name: string;
   phone: string | null;
   address: string;
+  instruction: string | null;
+  notes: string | null;
   rt: string;
   date: Date | string;
   status: string;
@@ -83,8 +85,19 @@ export function RouteStopCard({ stop, index }: { stop: Stop; index: number }) {
           <p className="mt-1 flex items-start gap-1 text-xs text-gray-400">
             <MapPin size={12} className="mt-0.5 shrink-0" /> {stop.address}
           </p>
+          {stop.instruction && (
+            <p className="mt-1 flex items-start gap-1 text-xs text-gray-500">
+              <ClipboardList size={12} className="mt-0.5 shrink-0 text-brand-600" /> {stop.instruction}
+            </p>
+          )}
         </div>
       </div>
+
+      {stop.notes && (
+        <p className="mt-2.5 flex items-start gap-1.5 rounded-lg bg-brand-tint px-2.5 py-2 text-xs text-brand-dark">
+          <NotebookPen size={13} className="mt-0.5 shrink-0 text-brand-600" /> {stop.notes}
+        </p>
+      )}
 
       {/* Stepper status */}
       <div className="mt-3 flex items-start">

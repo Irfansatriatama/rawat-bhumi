@@ -92,6 +92,9 @@ model UserProfile {
   rt            RT?      @relation(fields: [rtId], references: [id])
   phone         String?
   address       String?
+  // Default info pickup (dipakai sebagai nilai awal Informasi Pickup; bisa dikustom warga)
+  pickupInstruction String? // Instruksi Lokasi (mis. "Depan rumah, pagar hitam")
+  pickupNote        String? // Catatan untuk Kurir (default)
   avatarUrl     String?
   totalPoints   Int      @default(0)
   isActive      Boolean  @default(true)
@@ -183,6 +186,7 @@ model PickupRequest {
   status       String         @default("PENDING") // PICKUP_STATUS
   cancelReason String?
   address      String
+  instruction  String? // snapshot Instruksi Lokasi saat konfirmasi → dilihat Ksatria di rute
   notes        String?
   photoUrl     String?
   confirmedAt  DateTime?

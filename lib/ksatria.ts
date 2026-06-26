@@ -43,7 +43,11 @@ export async function ksatriaTodayStats(ksatriaId: string) {
   return { open, doneToday: recsToday.length, kgToday: gramsToday / 1000, estToday: earning.totalAmount };
 }
 
-type Stop = { id: string; name: string; phone: string | null; address: string; rt: string; date: Date; status: string };
+type Stop = {
+  id: string; name: string; phone: string | null; address: string;
+  instruction: string | null; notes: string | null;
+  rt: string; date: Date; status: string;
+};
 
 /** Rute hari kerja: KK siap dijemput + nama/telepon/alamat (untuk navigasi & hubungi). */
 export async function routeStopsForKsatria(ksatriaId: string): Promise<Stop[]> {
@@ -63,6 +67,8 @@ export async function routeStopsForKsatria(ksatriaId: string): Promise<Stop[]> {
     name: byProfile.get(r.userId)?.name ?? "-",
     phone: byProfile.get(r.userId)?.phone ?? null,
     address: r.address,
+    instruction: r.instruction,
+    notes: r.notes,
     rt: r.schedule.rt.number,
     date: r.schedule.scheduledDate,
     status: r.status,
