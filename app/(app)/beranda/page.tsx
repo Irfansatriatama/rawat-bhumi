@@ -170,7 +170,7 @@ export default async function Beranda() {
             )}
           </p>
         </div>
-        <Link href="/akun" className="press relative grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand-tint">
+        <Link href="/notifikasi" className="press relative grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand-tint">
           <Bell size={18} className="text-brand-dark" />
           {unread > 0 && (
             <span className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-brand-red px-1 text-[10px] font-bold text-white">

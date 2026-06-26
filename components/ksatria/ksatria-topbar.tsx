@@ -21,7 +21,7 @@ export function KsatriaTopbar({ unread = 0 }: { unread?: number }) {
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/logo-rawat-bhumi.png" alt="Rawat Bhumi" className="h-[34px] w-auto shrink-0" />
       <h1 className="min-w-0 flex-1 truncate text-center text-base font-bold tracking-tight text-brand-dark">{title}</h1>
-      <Link href="/ksatria/akun" className="press relative grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand-tint">
+      <Link href="/ksatria/notifikasi" className="press relative grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand-tint">
         <Bell size={18} className="text-brand-dark" />
         {unread > 0 && (
           <span className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-brand-red px-1 text-[10px] font-bold text-white">

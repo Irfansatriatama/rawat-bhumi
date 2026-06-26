@@ -1,7 +1,8 @@
 import { handle } from "@/lib/api";
 import { prisma } from "@/lib/db";
 import { getSessionLike } from "@/lib/session";
-import { PICKUP_STATUS } from "@/lib/prisma-enums";
+import { PICKUP_STATUS, NOTIFICATION_TYPE } from "@/lib/prisma-enums";
+import { notifyUser } from "@/lib/notifications";
 
 // Warga konfirmasi hadir pada sebuah jadwal → buat PickupRequest.
 export const POST = handle(async (req) => {
@@ -30,5 +31,27 @@ export const POST = handle(async (req) => {
       notes: profile?.pickupNote ?? null,
     },
   });
+
+  // Beri tahu Ksatria yang ditugaskan bahwa ada KK baru konfirmasi hadir.
+  if (schedule.ksatriaId) {
+    const ksatria = await prisma.ksatriaProfile.findUnique({
+      where: { id: schedule.ksatriaId },
+      select: { userId: true },
+    });
+    const ksatriaUser = ksatria
+      ? await prisma.userProfile.findUnique({ where: { id: ksatria.userId }, select: { userId: true } })
+      : null;
+    const warga = await prisma.user.findUnique({ where: { id: session.userId }, select: { name: true } });
+    if (ksatriaUser?.userId) {
+      await notifyUser(ksatriaUser.userId, {
+        title: "KK baru konfirmasi 📦",
+        body: `${warga?.name ?? "Seorang warga"} siap dijemput. Cek daftar tugasmu.`,
+        type: NOTIFICATION_TYPE.PICKUP_NEW_REQUEST,
+        refId: request.id,
+        url: "/ksatria/tugas",
+      }).catch(() => {});
+    }
+  }
+
   return Response.json(request, { status: 201 });
 });
