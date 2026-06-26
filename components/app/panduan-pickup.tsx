@@ -92,7 +92,12 @@ export function PanduanPickup() {
   return (
     <>
       <div className="rounded-[var(--radius-card)] bg-white p-4 ring-1 ring-brand-dark/5 [box-shadow:var(--shadow-soft)]">
-        <h3 className="text-[12px] font-bold uppercase tracking-wide text-brand-dark">Panduan Sebelum Pickup</h3>
+        <div className="flex items-center justify-between">
+          <h3 className="text-[12px] font-bold uppercase tracking-wide text-brand-dark">Panduan Sebelum Pickup</h3>
+          <Link href="/pickup/panduan" className="press flex items-center gap-0.5 text-xs font-medium text-brand-600">
+            Lihat Detail <ChevronRight size={14} />
+          </Link>
+        </div>
         <div className="mt-4 grid grid-cols-4 gap-2">
           {PANDUAN.map((p, i) => {
             const Icon = p.icon;
