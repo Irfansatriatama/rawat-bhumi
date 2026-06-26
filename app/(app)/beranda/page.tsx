@@ -11,6 +11,7 @@ import {
   SCHEDULE_STATUS, SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS, CONTENT_CATEGORY,
 } from "@/lib/prisma-enums";
 import { getDayActivity } from "@/lib/activity";
+import { getWasteJourney } from "@/lib/journey";
 import { Card } from "@/components/ui/primitives";
 import { LearnCarousel, type LearnItem } from "@/components/ui/learn-carousel";
 import { ActivityCard } from "@/components/beranda/activity-card";
@@ -118,10 +119,8 @@ export default async function Beranda() {
   const target = Math.max(1000, (profile?.rt?.totalKK ?? 0) * 4);
   const targetPct = Math.min(100, Math.round((myRtKg / target) * 100));
 
-  // Stepper perjalanan sampah (tahap diturunkan dari ada/tidaknya setoran)
-  const hasRecord = (agg._sum.totalGrams ?? 0) > 0;
-  const STEPS = ["Dijemput", "Dipilah", "Diangkut", "Diolah", "Produk baru"];
-  const activeStep = hasRecord ? 3 : 0;
+  // Perjalanan sampah — data-driven dari setoran warga + arus hilir komunitas
+  const journey = pid ? await getWasteJourney(pid) : null;
 
   // Dampak (semua data asli)
   const dmpk = [
@@ -268,41 +267,45 @@ export default async function Beranda() {
           </section>
         )}
 
-        {/* ===== STEPPER PERJALANAN SAMPAH ===== */}
-        <Card className="p-4">
-          <SectionHead title="Perjalanan sampah" href="/komunitas" action="Lihat Detail" />
-          <div className="flex items-start justify-between">
-            {STEPS.map((s, i) => {
-              const done = i < activeStep;
-              const active = i === activeStep;
-              return (
-                <div key={s} className="relative flex flex-1 flex-col items-center">
+        {/* ===== PERJALANAN SAMPAH (data-driven) ===== */}
+        {journey && (
+          <Card className="p-4">
+            <SectionHead title="Perjalanan sampah" href="/beranda/perjalanan" action="Lihat Detail" />
+            <div className="flex items-start justify-between">
+              {journey.stages.map((s, i) => (
+                <div key={s.key} className="relative flex flex-1 flex-col items-center">
                   {/* garis penghubung */}
-                  {i < STEPS.length - 1 && (
-                    <span
-                      className={`absolute left-1/2 top-3.5 h-0.5 w-full ${i < activeStep ? "bg-brand-600" : "bg-gray-200"}`}
-                    />
+                  {i < journey.stages.length - 1 && (
+                    <span className={`absolute left-1/2 top-3.5 h-0.5 w-full ${s.done ? "bg-brand-600" : "bg-gray-200"}`} />
                   )}
                   <span
                     className={`relative z-10 grid h-7 w-7 place-items-center rounded-full text-[11px] font-bold ${
-                      done
+                      s.done
                         ? "bg-brand-600 text-white"
-                        : active
+                        : s.active
                           ? "bg-brand-dark text-white ring-4 ring-brand-dark/10"
                           : "bg-gray-200 text-gray-400"
                     }`}
                   >
-                    {done ? <Check size={13} strokeWidth={3} /> : i + 1}
+                    {s.done ? <Check size={13} strokeWidth={3} /> : i + 1}
                   </span>
-                  <p className={`mt-1.5 text-center text-[10px] font-medium leading-tight ${active || done ? "text-brand-dark" : "text-gray-400"}`}>
-                    {s}
+                  <p className={`mt-1.5 text-center text-[10px] font-medium leading-tight ${s.active || s.done ? "text-brand-dark" : "text-gray-400"}`}>
+                    {s.label}
                   </p>
-                  {active && <p className="text-center text-[9px] text-brand-600">proses</p>}
+                  {s.active && <p className="text-center text-[9px] text-brand-600">proses</p>}
                 </div>
-              );
-            })}
-          </div>
-        </Card>
+              ))}
+            </div>
+            <Link
+              href="/beranda/perjalanan"
+              className="press mt-3 flex items-center gap-2 rounded-xl bg-brand-tint px-3 py-2.5"
+            >
+              <Info size={14} className="shrink-0 text-brand-600" />
+              <span className="flex-1 text-xs font-medium text-brand-dark">{journey.summary}</span>
+              <ChevronRight size={15} className="shrink-0 text-gray-400" />
+            </Link>
+          </Card>
+        )}
 
         {/* ===== KONTRIBUSI LINGKUNGAN ===== */}
         <Card className="p-4">
