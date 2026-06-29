@@ -1,54 +1,46 @@
 /**
- * Emblem Rawat Bhumi — rosette daun (leaf pattern) dalam dua nuansa hijau,
- * mengikuti logo pada referensi splash. Dipakai di splash, login, dan PWA.
+ * Emblem Rawat Bhumi — memakai logo resmi `public/brand/emblem.png`
+ * (rosette gradient hijau→teal dari GPS_IDENTITAS). Hanya <img> tanpa state,
+ * aman dipakai di server & client.
  *
- * Hanya markup SVG (tanpa state) sehingga aman dipakai di server/client.
+ * Catatan kontras: emblem berwarna paling bersih di atas latar TERANG.
+ * Untuk latar gelap, bungkus dengan tile putih (lihat `LogoTile`).
  */
 export function LogoMark({ size = 64, className = "" }: { size?: number; className?: string }) {
   return (
-    <svg
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src="/brand/emblem.png"
+      alt="Logo Rawat Bhumi"
       width={size}
       height={size}
-      viewBox="0 0 64 64"
-      fill="none"
-      role="img"
-      aria-label="Logo Rawat Bhumi"
+      draggable={false}
+      style={{ width: size, height: size }}
       className={className}
+    />
+  );
+}
+
+/**
+ * Emblem di atas tile putih membulat — dipakai pada latar gelap
+ * (header gradient, splash gelap) agar logo tetap kontras & "premium".
+ */
+export function LogoTile({
+  size = 56,
+  pad = 8,
+  className = "",
+}: {
+  size?: number;
+  pad?: number;
+  className?: string;
+}) {
+  return (
+    <span
+      className={`grid place-items-center rounded-2xl bg-white shadow-sm ring-1 ring-black/5 ${className}`}
+      style={{ width: size, height: size }}
     >
-      {/* Empat kelopak daun mengelilingi pusat, warna selang-seling */}
-      <g>
-        {/* atas */}
-        <path
-          d="M32 5c7 5 10 11 10 17 0 6-4 10-10 10s-10-4-10-10c0-6 3-12 10-17Z"
-          fill="#4ce059"
-        />
-        {/* kanan */}
-        <path
-          d="M59 32c-5 7-11 10-17 10-6 0-10-4-10-10s4-10 10-10c6 0 12 3 17 10Z"
-          fill="#0f5d4d"
-        />
-        {/* bawah */}
-        <path
-          d="M32 59c-7-5-10-11-10-17 0-6 4-10 10-10s10 4 10 10c0 6-3 12-10 17Z"
-          fill="#22b24c"
-        />
-        {/* kiri */}
-        <path
-          d="M5 32c5-7 11-10 17-10 6 0 10 4 10 10s-4 10-10 10C16 42 10 39 5 32Z"
-          fill="#0a3f34"
-        />
-      </g>
-      {/* tulang daun lembut */}
-      <g stroke="#ffffff" strokeWidth="1.6" strokeLinecap="round" opacity="0.55">
-        <path d="M32 12v16" />
-        <path d="M52 32H36" />
-        <path d="M32 52V36" />
-        <path d="M12 32h16" />
-      </g>
-      {/* mata pusat */}
-      <circle cx="32" cy="32" r="4.4" fill="#f3f8f4" />
-      <circle cx="32" cy="32" r="2" fill="#22b24c" />
-    </svg>
+      <LogoMark size={size - pad * 2} />
+    </span>
   );
 }
 

@@ -6,7 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import { authClient, signIn } from "@/lib/auth-client";
 import { homeForRole } from "@/lib/roles";
 import { Button } from "@/components/ui/loading";
-import { LogoMark } from "@/components/brand/logo-mark";
+import { LogoTile } from "@/components/brand/logo-mark";
 import { HeroIllustration } from "@/components/brand/hero-illustration";
 import { FeaturePills } from "@/components/brand/feature-pills";
 
@@ -43,7 +43,7 @@ export default function LoginPage() {
         <div className="pointer-events-none absolute -bottom-24 -left-10 h-56 w-56 rounded-full bg-brand/10" />
 
         <div className="relative flex items-center gap-3">
-          <LogoMark size={48} />
+          <LogoTile size={52} />
           <div>
             <p className="text-xl font-bold leading-tight">Rawat Bhumi</p>
             <p className="text-sm text-white/60">Ubah pola pikir, rawat bumi hingga hilir</p>
@@ -76,9 +76,7 @@ export default function LoginPage() {
             <ArrowLeft size={18} />
           </button>
           <div className="relative flex flex-col items-center">
-            <span className="grid h-16 w-16 place-items-center rounded-2xl bg-white/10 ring-1 ring-white/15">
-              <LogoMark size={44} />
-            </span>
+            <LogoTile size={64} pad={10} />
             <h1 className="mt-3 text-2xl font-bold tracking-tight">Selamat datang</h1>
             <p className="mt-1 text-sm text-white/70">Masuk untuk melanjutkan</p>
           </div>

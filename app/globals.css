@@ -11,12 +11,13 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  /* Brand Rawat Bhumi — eco friendly & playful */
-  --color-brand: #4ce059;          /* hijau pop (aksen utama) */
-  --color-brand-600: #22b24c;      /* hijau tegas untuk teks di atas terang */
-  --color-brand-dark: #0f5d4d;     /* teal gelap (header, judul) */
-  --color-brand-deep: #0a3f34;     /* teal paling gelap (gradient bawah) */
-  --color-brand-lime: #a0cc44;
+  /* Brand Rawat Bhumi — diselaraskan dgn logo resmi (GPS_IDENTITAS / docs/brand) */
+  --color-brand: #3dba5b;          /* hijau pop (aksen utama) — natural, selaras logo */
+  --color-brand-600: #1f9d55;      /* hijau tegas utk teks di atas terang (≈ logo #23954e) */
+  --color-brand-teal: #0e9d9b;     /* teal logo (kelopak kanan-bawah emblem) */
+  --color-brand-dark: #0b5563;     /* teal gelap (header, judul) ≈ deep teal logo #016172 */
+  --color-brand-deep: #073d49;     /* teal paling gelap (gradient bawah) */
+  --color-brand-lime: #a0cc44;     /* lime logo (kelopak kanan-atas) */
   --color-brand-soft: #e6f6ea;     /* permukaan kartu lembut */
   --color-brand-tint: #f3f8f4;     /* latar halaman */
   --color-brand-bg: #f3f8f4;       /* alias latar halaman (admin/ksatria) = tint */
@@ -26,8 +27,8 @@
   /* sudut & bayangan terstandar */
   --radius-card: 1.25rem;          /* 20px — satu skala untuk semua kartu */
 
-  --shadow-soft: 0 1px 2px rgb(15 93 77 / 0.04), 0 8px 24px -12px rgb(15 93 77 / 0.18);
-  --shadow-pop: 0 10px 30px -10px rgb(34 178 76 / 0.45);
+  --shadow-soft: 0 1px 2px rgb(11 85 99 / 0.04), 0 8px 24px -12px rgb(11 85 99 / 0.18);
+  --shadow-pop: 0 10px 30px -10px rgb(31 157 85 / 0.45);
 }
 
 body {

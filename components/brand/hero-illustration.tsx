@@ -107,7 +107,7 @@ export function HeroIllustration({
         {/* tengah-kiri — menyapu */}
         <g>
           <circle cx="150" cy="210" r="9" fill="#d9a87f" />
-          <path d="M140 222c0-6 4-10 10-10s10 4 10 12l-2 20h-16Z" fill="#22b24c" />
+          <path d="M140 222c0-6 4-10 10-10s10 4 10 12l-2 20h-16Z" fill="#1f9d55" />
           <rect x="144" y="252" width="6" height="14" rx="3" fill="#173a30" />
           <rect x="152" y="252" width="6" height="14" rx="3" fill="#173a30" />
           <path d="M158 220l24 30" stroke="#9a6b3f" strokeWidth="3" strokeLinecap="round" />
@@ -127,7 +127,7 @@ export function HeroIllustration({
         {/* kanan — berdiri menyiram/berkebun */}
         <g>
           <circle cx="300" cy="208" r="9" fill="#d9a87f" />
-          <path d="M290 220c0-6 4-10 10-10s10 4 10 12l-2 22h-16Z" fill="#22b24c" />
+          <path d="M290 220c0-6 4-10 10-10s10 4 10 12l-2 22h-16Z" fill="#1f9d55" />
           <rect x="294" y="252" width="6" height="14" rx="3" fill="#173a30" />
           <rect x="302" y="252" width="6" height="14" rx="3" fill="#173a30" />
           <path d="M286 230l-12 6" stroke="#d9a87f" strokeWidth="5" strokeLinecap="round" />
@@ -141,7 +141,7 @@ export function HeroIllustration({
         </g>
 
         {/* lengkungan teal gelap di dasar agar menyatu dengan seksi gelap */}
-        <path d="M0 288c70-16 130-16 200-16s130 0 200 16v12H0Z" fill="#0a3f34" />
+        <path d="M0 288c70-16 130-16 200-16s130 0 200 16v12H0Z" fill="#073d49" />
       </g>
     </svg>
   );

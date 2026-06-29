@@ -8,7 +8,7 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: "/beranda",
     display: "standalone",
     background_color: "#F7F5F5",
-    theme_color: "#0F5D4D",
+    theme_color: "#0b5563",
     orientation: "portrait",
     icons: [
       { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },

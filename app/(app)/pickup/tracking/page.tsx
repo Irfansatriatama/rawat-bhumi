@@ -106,7 +106,7 @@ export default async function TrackingPage() {
           />
           {/* rute */}
           <svg className="absolute inset-0 h-full w-full" viewBox="0 0 320 224" fill="none" preserveAspectRatio="none">
-            <path d="M52 176 C 120 150, 110 80, 210 72 S 280 60, 276 56" stroke="#22b24c" strokeWidth="4" strokeDasharray="2 10" strokeLinecap="round" />
+            <path d="M52 176 C 120 150, 110 80, 210 72 S 280 60, 276 56" stroke="#1f9d55" strokeWidth="4" strokeDasharray="2 10" strokeLinecap="round" />
           </svg>
           {/* titik kurir */}
           <div className="absolute left-[14%] top-[74%]">
