@@ -63,3 +63,34 @@ export function calcKsatriaEarning(pickupCount: number, totalGrams: number) {
   const bonusAmount = Math.round((totalGrams / 1000) * KSATRIA_RATE.BONUS_PER_KG);
   return { baseAmount, bonusAmount, totalAmount: baseAmount + bonusAmount };
 }
+
+// ---- CEK KESIAPAN SAMPAH (self-assessment, fondasi WSSPR) ----
+// Skor = persentase kategori yang sudah terpilah dari 4 kategori.
+// ≥75 Siap · 50–74 Cukup · <50 Perlu belajar. Pickup TIDAK PERNAH ditolak;
+// skor di bawah standar memicu nudge edukasi (Learning Loop).
+export const READINESS = { SIAP: 75, CUKUP: 50 } as const;
+
+export type ReadinessFlags = {
+  organik: boolean;
+  anorganik: boolean;
+  residu: boolean;
+  b3: boolean;
+};
+
+export function calcReadinessScore(f: ReadinessFlags): number {
+  const done = [f.organik, f.anorganik, f.residu, f.b3].filter(Boolean).length;
+  return Math.round((done / 4) * 100);
+}
+
+export type ReadinessLevel = "SIAP" | "CUKUP" | "BELAJAR";
+
+export function readinessLevel(score: number): ReadinessLevel {
+  if (score >= READINESS.SIAP) return "SIAP";
+  if (score >= READINESS.CUKUP) return "CUKUP";
+  return "BELAJAR";
+}
+
+export function readinessLabel(score: number): string {
+  const l = readinessLevel(score);
+  return l === "SIAP" ? "Siap pickup" : l === "CUKUP" ? "Cukup" : "Perlu belajar";
+}

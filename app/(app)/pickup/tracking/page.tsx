@@ -1,6 +1,6 @@
 import Link from "next/link";
 import {
-  Truck, Navigation, MapPin, Phone, MessageCircle, Star, Clock,
+  Truck, Navigation, MapPin, Phone, MessageCircle, Star,
   CalendarCheck, BadgeCheck, MapPinCheck, CircleCheck, PackageCheck,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -57,19 +57,19 @@ export default async function TrackingPage() {
   const kurirAvatar = schedule?.ksatria?.userProfile?.avatarUrl ?? kurirUser?.image ?? null;
   const plat = schedule?.ksatria?.vehiclePlate ?? "B 9182 RBX";
   const kendaraan = schedule?.ksatria?.vehicleType ?? "Truk Pikap";
-  const onDuty = schedule?.ksatria?.isOnDuty ?? true;
 
   const inProgress = schedule?.status === SCHEDULE_STATUS.IN_PROGRESS;
   const active = myRequest?.status
     ? STATUS_INDEX[myRequest.status] ?? 0
     : inProgress ? 2 : 1;
 
-  const eta = active >= 4 ? "Selesai" : active === 3 ? "Sudah tiba" : active >= 2 ? "± 12 menit" : "Terjadwal";
+  const stage = active >= 4 ? "Selesai" : active >= 2 ? "Hari ini pickup" : "Terjadwal";
   const headline =
     active >= 4 ? "Pickup selesai" :
     active === 3 ? "Kurir sudah tiba di lokasimu" :
-    active >= 2 ? "Kurir sedang menuju lokasimu" :
-    "Menunggu kurir berangkat";
+    active >= 2 ? "Kurir sedang dalam perjalanan" :
+    active === 1 ? "Kurir sudah ditugaskan" :
+    "Menunggu konfirmasi kurir";
 
   const alamat = myRequest?.address ?? profile?.address ?? "Jl. Wijaya Kusuma No. 12, RT 05 / RW 02";
 
@@ -81,7 +81,7 @@ export default async function TrackingPage() {
           <EmptyState
             icon={Navigation}
             title="Belum ada pickup untuk dilacak"
-            hint="Saat ada penjemputan terjadwal, posisi kurir akan muncul di sini secara langsung."
+            hint="Saat ada penjemputan terjadwal, status pickup-mu akan muncul di sini."
           />
         </div>
       </div>
@@ -93,53 +93,20 @@ export default async function TrackingPage() {
       <PickupHeader />
 
       <div className="space-y-3.5 p-4">
-        {/* ===== PETA (simulasi) ===== */}
-        <Card className="relative h-56 overflow-hidden p-0">
-          {/* grid jalan */}
-          <div
-            className="absolute inset-0 bg-brand-soft"
-            style={{
-              backgroundImage:
-                "linear-gradient(rgba(15,93,77,0.08) 1px,transparent 1px),linear-gradient(90deg,rgba(15,93,77,0.08) 1px,transparent 1px)",
-              backgroundSize: "26px 26px",
-            }}
-          />
-          {/* rute */}
-          <svg className="absolute inset-0 h-full w-full" viewBox="0 0 320 224" fill="none" preserveAspectRatio="none">
-            <path d="M52 176 C 120 150, 110 80, 210 72 S 280 60, 276 56" stroke="#1f9d55" strokeWidth="4" strokeDasharray="2 10" strokeLinecap="round" />
-          </svg>
-          {/* titik kurir */}
-          <div className="absolute left-[14%] top-[74%]">
-            <span className="absolute -inset-3 animate-ping rounded-full bg-brand/40" />
-            <span className="relative grid h-10 w-10 place-items-center rounded-full bg-brand-dark text-white ring-4 ring-white shadow-lg">
-              <Truck size={18} />
-            </span>
-          </div>
-          {/* titik tujuan */}
-          <div className="absolute right-[12%] top-[18%]">
-            <span className="grid h-9 w-9 place-items-center rounded-full bg-white text-brand-red ring-2 ring-brand-red/30 shadow">
-              <MapPin size={18} className="fill-brand-red/10" />
-            </span>
-          </div>
-          {/* badge ETA */}
-          <div className="absolute left-3 top-3 flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1.5 text-xs font-semibold text-brand-dark shadow">
-            <Clock size={13} className="text-brand-600" /> ETA {eta}
-          </div>
-          <span className={`absolute right-3 top-3 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-semibold shadow ${onDuty ? "bg-brand-600 text-white" : "bg-slate-200 text-slate-600"}`}>
-            <span className={`h-1.5 w-1.5 rounded-full ${onDuty ? "bg-white" : "bg-slate-500"}`} /> {onDuty ? "Online" : "Offline"}
-          </span>
-        </Card>
-
-        {/* ===== STATUS HEADLINE ===== */}
-        <Card className="flex items-center gap-3 p-4">
-          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-brand-soft">
-            <Navigation size={22} className="text-brand-600" />
-          </span>
-          <div className="min-w-0">
-            <p className="font-semibold text-brand-dark">{headline}</p>
-            <p className="mt-0.5 flex items-center gap-1 text-xs text-gray-500">
-              <MapPin size={12} className="shrink-0" /> <span className="truncate">{alamat}</span>
-            </p>
+        {/* ===== STATUS HERO (berbasis tahap, bukan posisi live) ===== */}
+        <Card className="overflow-hidden p-0">
+          <div className="app-header relative overflow-hidden p-5 text-white">
+            <div className="pointer-events-none absolute -right-8 -top-10 h-36 w-36 rounded-full bg-white/5" />
+            <Truck size={120} strokeWidth={1.1} className="pointer-events-none absolute -bottom-5 -right-3 text-white/10" />
+            <div className="relative">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-[11px] font-semibold ring-1 ring-white/15">
+                <span className="h-1.5 w-1.5 rounded-full bg-brand-lime" /> {stage}
+              </span>
+              <h2 className="mt-3 text-xl font-bold leading-snug">{headline}</h2>
+              <p className="mt-1.5 flex items-center gap-1 text-sm text-white/80">
+                <MapPin size={13} className="shrink-0" /> <span className="truncate">{alamat}</span>
+              </p>
+            </div>
           </div>
         </Card>
 

@@ -7,6 +7,11 @@ dokumen pilot (user flow v3 + sitemap), dan kode.
 **Prinsip:** user flow v3 = kebenaran **MVP**; User Journey resmi = **north-star v2**.
 MVP disiplin (ala Apple), hemat biaya API/SMS, fokus komunitas RT + Pak RT.
 
+> **Update 2026-06-29:** diputuskan **semua 5 item dinaikkan ke MVP fungsional** (bukan sekadar
+> placeholder) karena akan **dites langsung** — termasuk Sertifikat (generate), Onboarding self-serve,
+> dan Founding Member. **OTP pakai dev/test mode** (kode tampil di layar/log, nol biaya, swappable ke
+> SMS/WA asli lewat env). Tabel di bawah = rencana awal; status implementasi aktual ada di bagian "Progres".
+
 ---
 
 ## Ringkasan keputusan
@@ -85,6 +90,24 @@ Sudah terlanjur dibangun melebihi pilot doc — **diputuskan dipertahankan**, di
 - **Tantangan (Challenge) & Ranking RT** di Komunitas → biarkan (gamifikasi ringan, sudah jalan).
 - **AI scanner warga & payment in-app** → **HOLD/low-priority**, route dibiarkan sebagai "place"
   untuk pengembangan nanti (lihat `docs/brand/BRAND.md` §8).
+
+## Progres implementasi (MVP fungsional)
+
+- [x] **Cek Kesiapan Sampah (skor)** — bottom-sheet checklist 4 kategori → skor (≥75/50–74/<50) →
+  konfirmasi (`POST /api/pickup-requests` + `PickupRequest.readinessScore`). Nudge edukasi bila < siap.
+  ⚠️ **Butuh migrasi DB** (kolom baru) — lihat catatan di bawah.
+- [x] **Tracking → tahap status** — hapus peta simulasi/ETA-menit/dot live; ganti status hero jujur.
+- [ ] Sertifikat (generate) · [ ] Onboarding self-serve + OTP dev-mode · [ ] Founding Member.
+
+### ⚠️ Migrasi wajib sebelum deploy
+Kode `Cek Kesiapan` memakai kolom baru `PickupRequest.readinessScore`. **Jalankan dulu** di mesin lokal:
+
+```
+npx prisma migrate dev --name add_readiness_score   # tambahkan --skip-seed bila tak ingin reseed
+```
+
+Karena DB Supabase dipakai bersama (lokal & Vercel), kolom langsung tersedia di prod setelah migrasi.
+**Push kode setelah migrasi** agar halaman Pickup tidak error di prod.
 
 ## Backlog turunan (urutan saran)
 1. (MVP) Cek Kesiapan Sampah berskor di konfirmasi pickup + kolom `readinessScore`.

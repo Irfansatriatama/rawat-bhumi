@@ -8,7 +8,9 @@ import type { LucideIcon } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/session";
 import { kg } from "@/lib/format";
-import { SCHEDULE_STATUS } from "@/lib/prisma-enums";
+import { SCHEDULE_STATUS, WASTE_CATEGORY } from "@/lib/prisma-enums";
+import { getDayActivity } from "@/lib/activity";
+import type { ReadinessFlags } from "@/lib/business-rules";
 import { Card } from "@/components/ui/primitives";
 import { PickupHeader } from "@/components/app/pickup-header";
 import { PickupHeroActions } from "@/components/app/pickup-hero-actions";
@@ -57,6 +59,16 @@ export default async function PickupPage() {
   const lastWaste = pid
     ? await prisma.wasteRecord.findFirst({ where: { userId: pid }, orderBy: { recordedAt: "desc" } })
     : null;
+
+  // Cek Kesiapan Sampah — checklist awal dari aktivitas pilah hari ini.
+  const activity = pid ? await getDayActivity(pid) : [];
+  const doneOf = (cat: string) => activity.some((a) => a.key === cat && a.done);
+  const initialFlags: ReadinessFlags = {
+    organik: doneOf(WASTE_CATEGORY.ORGANIK),
+    anorganik: doneOf(WASTE_CATEGORY.ANORGANIK),
+    residu: doneOf(WASTE_CATEGORY.RESIDU),
+    b3: doneOf(WASTE_CATEGORY.B3),
+  };
 
   // ---- Nilai tampil (data asli → fallback persis mockup) ----
   const date = schedule?.scheduledDate ?? new Date("2025-06-14T08:00:00");
@@ -139,7 +151,12 @@ export default async function PickupPage() {
               </div>
             </div>
 
-            <PickupHeroActions scheduleId={schedule?.id} confirmed={confirmed} />
+            <PickupHeroActions
+              scheduleId={schedule?.id}
+              confirmed={confirmed}
+              initialFlags={initialFlags}
+              readinessScore={myRequest?.readinessScore ?? null}
+            />
           </div>
         </section>
 

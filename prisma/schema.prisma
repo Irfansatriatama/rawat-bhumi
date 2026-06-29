@@ -189,6 +189,8 @@ model PickupRequest {
   instruction  String? // snapshot Instruksi Lokasi saat konfirmasi → dilihat Ksatria di rute
   notes        String?
   photoUrl     String?
+  // Cek Kesiapan Sampah — skor self-assessment warga (0–100) saat konfirmasi. null = belum diisi.
+  readinessScore Int?
   confirmedAt  DateTime?
   wasteRecord  WasteRecord?
   createdAt    DateTime       @default(now())
