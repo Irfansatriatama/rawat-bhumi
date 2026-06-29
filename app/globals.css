@@ -57,3 +57,13 @@ body {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Cetak sertifikat: tampilkan hanya kartu sertifikat (Unduh PDF). */
+@media print {
+  body * { visibility: hidden; }
+  .cert-printable, .cert-printable * { visibility: visible; }
+  .cert-printable {
+    position: absolute; left: 0; top: 0; width: 100%;
+    border: none; box-shadow: none !important;
+  }
+}

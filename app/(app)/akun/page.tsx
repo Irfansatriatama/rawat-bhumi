@@ -2,7 +2,7 @@ import Link from "next/link";
 import {
   ChevronRight, Leaf, Cloud, CalendarDays, Truck, LogOut,
   User, MapPin, CreditCard, History, Star, Bell, ShieldCheck, Globe,
-  HelpCircle, PhoneCall, AlertTriangle, Info, Lock, FileText, Recycle,
+  HelpCircle, PhoneCall, AlertTriangle, Info, Lock, FileText, Recycle, Award,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { prisma } from "@/lib/db";
@@ -26,6 +26,7 @@ const MENU_AKUN: Row[] = [
   { icon: CreditCard, label: "Pembayaran & Tagihan", href: "/akun/pembayaran" },
   { icon: History, label: "Riwayat Transaksi", href: "/pickup/riwayat" },
   { icon: Star, label: "Poin & Reward", href: "/akun/poin" },
+  { icon: Award, label: "Sertifikat Dampak", href: "/akun/sertifikat" },
   { icon: Bell, label: "Pengaturan Notifikasi", href: "/akun/notifikasi" },
   { icon: ShieldCheck, label: "Keamanan Akun", href: "/akun/keamanan" },
   { icon: Globe, label: "Bahasa", href: "/akun/bahasa", value: "Bahasa Indonesia" },
@@ -82,6 +83,7 @@ export default async function AkunPage() {
 
   // Bulan aktif sejak mulai langganan / dibuat
   const start = sub?.startDate ?? profile?.createdAt ?? new Date();
+  // eslint-disable-next-line react-hooks/purity
   const monthsActive = Math.max(1, Math.round((Date.now() - new Date(start).getTime()) / (30 * 864e5)));
 
   // Jadwal pickup berikutnya
