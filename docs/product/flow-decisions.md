@@ -108,9 +108,11 @@ Sudah terlanjur dibangun melebihi pilot doc — **diputuskan dipertahankan**, di
   State Founding di Beranda (progress X/target + share referral), `/onboarding/founding`, dan
   **Aktivasi Wilayah** oleh Ketua RT di `/admin/pengajuan`.
 
-> ⚠️ **Migrasi `onboarding_founding`** (tabel join_requests/otp_dev_codes + kolom phone/founding/referral)
+> ⚠️ **Migrasi onboarding_founding** (tabel join_requests/otp_dev_codes + kolom phone/founding/referral)
 > **wajib diterapkan sebelum deploy** — kode auth (phone plugin) query kolom `user.phoneNumber`.
-> Jalankan: `npx prisma migrate deploy`. OTP dev-mode aktif default; set `OTP_DEV_MODE=false` utk produksi.
+> Jalankan di terminal interaktif (sesuai aturan proyek): `npx prisma migrate dev --name onboarding_founding`
+> (akan minta konfirmasi unique constraint phoneNumber/referralCode → setujui). Tidak mereset data.
+> OTP dev-mode aktif default; set `OTP_DEV_MODE=false` utk produksi.
 
 ### ⚠️ Migrasi wajib sebelum deploy
 Kode `Cek Kesiapan` memakai kolom baru `PickupRequest.readinessScore`. **Jalankan dulu** di mesin lokal:
