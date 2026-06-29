@@ -53,7 +53,7 @@ function OtpForm() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, ref }),
     }).catch(() => {});
-    router.push("/onboarding/komunitas");
+    router.push("/onboarding/paket");
     router.refresh();
   }
 

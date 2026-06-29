@@ -2,7 +2,7 @@ import Link from "next/link";
 import {
   Bell, Truck, ChevronRight, Info, Check, MapPin, BadgeCheck,
   Sprout, Recycle, Trophy, Target, Users,
-  Cloud, Package, Leaf, ArrowRight,
+  Cloud, Package, Leaf, ArrowRight, Gift, CircleDot,
 } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/session";
@@ -150,6 +150,23 @@ export default async function Beranda() {
     }
   }
 
+  // Reward nudge: poin aktif + progress ke reward terdekat berikutnya.
+  const points = profile?.totalPoints ?? 0;
+  const nextReward = await prisma.reward.findFirst({
+    where: { isActive: true, pointsCost: { gt: points } },
+    orderBy: { pointsCost: "asc" },
+  });
+  const rewardPct = nextReward ? Math.min(100, Math.round((points / nextReward.pointsCost) * 100)) : 100;
+
+  // Status Hari Ini: kondisi pickup terdekat.
+  const todayStatus = !nextSchedule
+    ? null
+    : nextSchedule.status === SCHEDULE_STATUS.IN_PROGRESS
+      ? { label: "Sedang pickup", tone: "text-brand-600", dot: "bg-brand-600" }
+      : countdown === "Hari ini"
+        ? { label: "Hari ini dijemput", tone: "text-brand-amber", dot: "bg-brand-amber" }
+        : { label: "Pickup terjadwal", tone: "text-gray-500", dot: "bg-gray-300" };
+
   // Founding Member: tampil menggantikan kartu pickup saat warga pelopor & wilayah belum aktif.
   const founding =
     profile?.isProvisional && profile.rt && !profile.rt.isActive && profile.rtId
@@ -272,6 +289,20 @@ export default async function Beranda() {
         </Card>
         )}
 
+        {/* ===== STATUS HARI INI ===== */}
+        {!founding && todayStatus && (
+          <Card className="flex items-center gap-3 p-4">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-brand-tint">
+              <CircleDot size={18} className={todayStatus.tone} />
+            </span>
+            <div className="flex-1">
+              <p className="text-[11px] text-gray-400">Status hari ini</p>
+              <p className={`text-sm font-bold ${todayStatus.tone}`}>{todayStatus.label}</p>
+            </div>
+            <span className={`h-2 w-2 rounded-full ${todayStatus.dot}`} />
+          </Card>
+        )}
+
         {/* ===== AKTIVITAS HARI INI (interaktif: tap untuk catat) ===== */}
         <ActivityCard initial={todayActivity} />
 
@@ -381,6 +412,30 @@ export default async function Beranda() {
             })}
           </div>
         </Card>
+
+        {/* ===== REWARD SAYA (nudge) ===== */}
+        <Link href="/akun/poin" className="press block">
+          <Card className="flex items-center gap-3.5 p-4">
+            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-amber-100 text-brand-amber">
+              <Gift size={22} />
+            </span>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-bold text-brand-dark">Reward Saya</p>
+                <p className="text-sm font-bold text-brand-600">{points.toLocaleString("id-ID")} poin</p>
+              </div>
+              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-brand-tint">
+                <div className="h-full rounded-full bg-gradient-to-r from-amber-400 to-brand-amber" style={{ width: `${Math.max(4, rewardPct)}%` }} />
+              </div>
+              <p className="mt-1.5 text-[11px] text-gray-500">
+                {nextReward
+                  ? `${(nextReward.pointsCost - points).toLocaleString("id-ID")} poin lagi menuju "${nextReward.name}"`
+                  : "Kamu bisa menukar reward sekarang!"}
+              </p>
+            </div>
+            <ChevronRight size={18} className="shrink-0 text-gray-300" />
+          </Card>
+        </Link>
 
         {/* footer kecil */}
         <Link href="/komunitas" className="flex items-center justify-center gap-1 py-1 text-xs font-medium text-brand-600">

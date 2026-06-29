@@ -1,7 +1,7 @@
 import Link from "next/link";
 import {
   ChevronRight, Leaf, Cloud, CalendarDays, Truck, LogOut,
-  User, MapPin, CreditCard, History, Star, Bell, ShieldCheck, Globe,
+  User, MapPin, CreditCard, Star, Settings, Users,
   HelpCircle, PhoneCall, AlertTriangle, Info, Lock, FileText, Recycle, Award,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -22,14 +22,12 @@ type Row = { icon: LucideIcon; label: string; href: string; value?: string };
 
 const MENU_AKUN: Row[] = [
   { icon: User, label: "Profil Saya", href: "/akun/profil" },
+  { icon: CreditCard, label: "Paket Saya", href: "/akun/paket" },
+  { icon: Users, label: "Komunitas Saya", href: "/akun/komunitas" },
   { icon: MapPin, label: "Alamat Saya", href: "/akun/alamat" },
-  { icon: CreditCard, label: "Pembayaran & Tagihan", href: "/akun/pembayaran" },
-  { icon: History, label: "Riwayat Transaksi", href: "/pickup/riwayat" },
   { icon: Star, label: "Poin & Reward", href: "/akun/poin" },
   { icon: Award, label: "Sertifikat Dampak", href: "/akun/sertifikat" },
-  { icon: Bell, label: "Pengaturan Notifikasi", href: "/akun/notifikasi" },
-  { icon: ShieldCheck, label: "Keamanan Akun", href: "/akun/keamanan" },
-  { icon: Globe, label: "Bahasa", href: "/akun/bahasa", value: "Bahasa Indonesia" },
+  { icon: Settings, label: "Pengaturan", href: "/akun/pengaturan" },
 ];
 const MENU_BANTUAN: Row[] = [
   { icon: HelpCircle, label: "Pusat Bantuan", href: "/akun/bantuan" },

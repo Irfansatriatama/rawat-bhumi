@@ -1,12 +1,13 @@
 import Link from "next/link";
 import {
-  Leaf, Users, Trophy, Target, ChevronDown, ChevronRight, Megaphone,
-  Truck, CloudSun, Sparkles,
+  Leaf, Users, Trophy, ChevronDown, ChevronRight, Megaphone,
+  Truck, CloudSun, Sparkles, UserCog, CalendarClock, MessageCircle, ShieldCheck, ClipboardList,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/session";
 import { tanggal } from "@/lib/format";
+import { SCHEDULE_STATUS, USER_ROLE } from "@/lib/prisma-enums";
 import { PageTopbar } from "@/components/ui/page-topbar";
 import { WilayahSelect } from "@/components/ui/wilayah-select";
 import { EventCarousel, type EventItem } from "@/components/ui/event-carousel";
@@ -103,6 +104,31 @@ export default async function KomunitasPage({
         : `RW ${r.number}, Kel. ${r.kelurahan.name}`,
   }));
 
+  // Komunitasku (info RT) + Leader gate
+  const role = (session!.user as { role?: string }).role;
+  const isLeader = role === USER_ROLE.ADMIN_RT;
+  const [ketua, mySchedule] = profile?.rtId
+    ? await Promise.all([
+        prisma.userProfile.findFirst({ where: { rtId: profile.rtId, role: USER_ROLE.ADMIN_RT } }),
+        prisma.pickupSchedule.findFirst({
+          where: { rtId: profile.rtId, status: { in: [SCHEDULE_STATUS.SCHEDULED, SCHEDULE_STATUS.IN_PROGRESS] } },
+          orderBy: { scheduledDate: "asc" },
+          include: { ksatria: { include: { userProfile: true } } },
+        }),
+      ])
+    : [null, null];
+  const ketuaUser = ketua ? await prisma.user.findUnique({ where: { id: ketua.userId }, select: { name: true } }) : null;
+  const ksatriaUser = mySchedule?.ksatria
+    ? await prisma.user.findUnique({ where: { id: mySchedule.ksatria.userId }, select: { name: true } })
+    : null;
+  const komunitasku = profile?.rt
+    ? [
+        { icon: UserCog, label: "Ketua RT", value: ketuaUser?.name ?? "Pengurus RT" },
+        { icon: Truck, label: "Ksatria Bhumi", value: ksatriaUser?.name ?? "Akan ditugaskan" },
+        { icon: CalendarClock, label: "Jadwal pickup", value: mySchedule ? `${tanggal(mySchedule.scheduledDate)} · ${mySchedule.timeSlot} WIB` : "Akan diumumkan" },
+      ]
+    : [];
+
   const eventItems: EventItem[] = events.map((e) => ({
     id: e.id,
     title: e.title,
@@ -126,6 +152,58 @@ export default async function KomunitasPage({
           <p className="mb-2 px-1 text-sm font-bold text-brand-dark">Wilayah Anda</p>
           <WilayahSelect options={options} value={selectedRwId} />
         </div>
+
+        {/* ===== LEADER (Ketua RT only) ===== */}
+        {isLeader && (
+          <Card className="p-4">
+            <div className="mb-2 flex items-center gap-2">
+              <ShieldCheck size={16} className="text-brand-600" />
+              <h2 className="text-sm font-bold text-brand-dark">Dashboard Ketua RT</h2>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                { icon: ClipboardList, label: "Pengajuan", href: "/admin/pengajuan" },
+                { icon: CalendarClock, label: "Atur Jadwal", href: "/admin/pickup" },
+                { icon: Trophy, label: "Laporan RT", href: "/admin/dashboard" },
+              ].map((m) => {
+                const Icon = m.icon;
+                return (
+                  <Link key={m.href} href={m.href} className="press flex flex-col items-center gap-1.5 rounded-2xl bg-brand-tint py-3 text-center">
+                    <Icon size={20} className="text-brand-600" />
+                    <span className="text-[11px] font-medium text-brand-dark">{m.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </Card>
+        )}
+
+        {/* ===== KOMUNITASKU (info RT) ===== */}
+        {komunitasku.length > 0 && (
+          <Card className="p-4">
+            <div className="mb-1 flex items-center justify-between">
+              <h2 className="text-sm font-bold text-brand-dark">Komunitasku</h2>
+              <Link href="/komunitas/anggota" className="flex items-center gap-1 text-xs font-medium text-brand-600">
+                <Users size={13} /> {wargaAktif} Anggota <ChevronRight size={13} />
+              </Link>
+            </div>
+            <div className="divide-y divide-brand-dark/5">
+              {komunitasku.map((r) => {
+                const Icon = r.icon;
+                return (
+                  <div key={r.label} className="flex items-center gap-3 py-2.5">
+                    <Icon size={17} className="shrink-0 text-brand-dark/70" />
+                    <span className="flex-1 text-xs text-gray-400">{r.label}</span>
+                    <span className="text-sm font-medium text-brand-dark">{r.value}</span>
+                  </div>
+                );
+              })}
+            </div>
+            <a href="https://wa.me/628111222333" className="press mt-2 flex items-center justify-center gap-2 rounded-xl bg-brand-soft py-2.5 text-sm font-semibold text-brand-600">
+              <MessageCircle size={15} /> WhatsApp Operator
+            </a>
+          </Card>
+        )}
 
         {/* ===== RINGKASAN LINGKUNGAN ===== */}
         <div className="relative overflow-hidden rounded-[var(--radius-card)] bg-gradient-to-br from-brand-dark to-brand-deep p-5 text-white [box-shadow:var(--shadow-soft)]">
@@ -278,7 +356,7 @@ export default async function KomunitasPage({
                 const meta = annIcon(a.title);
                 const Icon = meta.icon;
                 const when = a.publishedAt ?? a.createdAt;
-                const isNew = Date.now() - new Date(when).getTime() < 36e5 * 24;
+                const isNew = now.getTime() - new Date(when).getTime() < 36e5 * 24;
                 return (
                   <div key={a.id} className="flex items-start gap-3 py-3">
                     <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl ${meta.bg} text-white`}>

@@ -1,4 +1,5 @@
-import { History, Recycle, Sprout, Trash2, TriangleAlert, Coins, Cloud, CalendarDays, Scale } from "lucide-react";
+import Link from "next/link";
+import { History, Recycle, Sprout, Trash2, TriangleAlert, Coins, Cloud, CalendarDays, Scale, ChevronRight } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { getSessionLike } from "@/lib/session";
@@ -50,7 +51,8 @@ export default async function RiwayatPage() {
             {/* Daftar setoran */}
             <div className="space-y-3">
               {records.map((r) => (
-                <Card key={r.id} className="p-4">
+                <Link key={r.id} href={`/pickup/riwayat/${r.id}`} className="block">
+                <Card className="press p-4">
                   <div className="flex items-center gap-3">
                     <IconChip icon={CalendarDays} tone="green" size={42} />
                     <div className="flex-1">
@@ -61,6 +63,7 @@ export default async function RiwayatPage() {
                       </p>
                     </div>
                     <span className="text-lg font-bold text-brand-dark">{(r.totalGrams / 1000).toFixed(1)}<span className="text-xs font-medium text-gray-400"> kg</span></span>
+                    <ChevronRight size={16} className="shrink-0 text-gray-300" />
                   </div>
                   <div className="mt-3 grid grid-cols-4 gap-2 border-t border-brand-dark/5 pt-3">
                     {cats(r).map((c) => (
@@ -72,6 +75,7 @@ export default async function RiwayatPage() {
                     ))}
                   </div>
                 </Card>
+                </Link>
               ))}
             </div>
           </>
