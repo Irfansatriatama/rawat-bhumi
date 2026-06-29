@@ -100,11 +100,17 @@ Sudah terlanjur dibangun melebihi pilot doc — **diputuskan dipertahankan**, di
 - [x] **Sertifikat Dampak** — `lib/certificate.ts` (agregat per periode, tanpa model baru),
   `/akun/sertifikat` (daftar + empty state) & `/akun/sertifikat/[period]` (kartu printable +
   Unduh PDF/Bagikan). **Tanpa migrasi.**
-- [ ] **Onboarding self-serve + OTP dev-mode** — *(besar; perlu Better Auth phone plugin + model JoinRequest)*
-- [ ] **Founding Member** — *(perlu RT.isActive/foundingTarget + referral; terkait onboarding)*
+- [x] **Onboarding self-serve + OTP dev-mode** — Better Auth `phoneNumber` plugin (OTP dev: kode
+  tampil di layar, nol biaya). Alur: `/daftar` (nama+HP) → `/daftar/otp` → `/onboarding/komunitas`
+  (cari RT + Ajukan Bergabung / Founding / Hubungi) → `/onboarding/menunggu` → approval Ketua RT di
+  `/admin/pengajuan` → `/onboarding/selamat-datang`. Model `JoinRequest`.
+- [x] **Founding Member** — `RT.isActive`/`foundingTarget`, `UserProfile.referralCode/referredById`.
+  State Founding di Beranda (progress X/target + share referral), `/onboarding/founding`, dan
+  **Aktivasi Wilayah** oleh Ketua RT di `/admin/pengajuan`.
 
-> Catatan urutan: Onboarding & Founding **saling terkait** (jadi Founding terjadi saat registrasi tak
-> menemukan komunitas aktif) → dikerjakan sebagai satu unit dengan migrasi tersendiri.
+> ⚠️ **Migrasi `onboarding_founding`** (tabel join_requests/otp_dev_codes + kolom phone/founding/referral)
+> **wajib diterapkan sebelum deploy** — kode auth (phone plugin) query kolom `user.phoneNumber`.
+> Jalankan: `npx prisma migrate deploy`. OTP dev-mode aktif default; set `OTP_DEV_MODE=false` utk produksi.
 
 ### ⚠️ Migrasi wajib sebelum deploy
 Kode `Cek Kesiapan` memakai kolom baru `PickupRequest.readinessScore`. **Jalankan dulu** di mesin lokal:

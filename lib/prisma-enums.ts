@@ -128,6 +128,13 @@ export const CHALLENGE_TARGET = {
   PARTICIPATION_PCT: "PARTICIPATION_PCT",
 } as const;
 
+export const JOIN_REQUEST_STATUS = {
+  PENDING: "PENDING",
+  APPROVED: "APPROVED",
+  REJECTED: "REJECTED",
+} as const;
+export type JoinRequestStatus = (typeof JOIN_REQUEST_STATUS)[keyof typeof JOIN_REQUEST_STATUS];
+
 export const NOTIFICATION_TYPE = {
   PICKUP_REMINDER: "PICKUP_REMINDER",
   PICKUP_ON_THE_WAY: "PICKUP_ON_THE_WAY",
@@ -137,4 +144,7 @@ export const NOTIFICATION_TYPE = {
   CHALLENGE_UPDATE: "CHALLENGE_UPDATE",
   PAYMENT_DUE: "PAYMENT_DUE",
   ANNOUNCEMENT: "ANNOUNCEMENT",
+  JOIN_APPROVED: "JOIN_APPROVED", // pengajuan gabung disetujui Ketua RT
+  JOIN_REJECTED: "JOIN_REJECTED", // pengajuan gabung ditolak
+  COMMUNITY_ACTIVATED: "COMMUNITY_ACTIVATED", // wilayah Founding Member diaktifkan
 } as const;

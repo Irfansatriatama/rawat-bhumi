@@ -15,6 +15,7 @@ import { getWasteJourney } from "@/lib/journey";
 import { Card } from "@/components/ui/primitives";
 import { LearnCarousel, type LearnItem } from "@/components/ui/learn-carousel";
 import { ActivityCard } from "@/components/beranda/activity-card";
+import { FoundingCard } from "@/components/beranda/founding-card";
 
 const PLAN_LABEL: Record<string, string> = {
   [SUBSCRIPTION_PLAN.RUMAH_TANGGA]: "Paket Rumah Tangga",
@@ -149,6 +150,16 @@ export default async function Beranda() {
     }
   }
 
+  // Founding Member: tampil menggantikan kartu pickup saat warga pelopor & wilayah belum aktif.
+  const founding =
+    profile?.isProvisional && profile.rt && !profile.rt.isActive && profile.rtId
+      ? {
+          count: await prisma.userProfile.count({ where: { rtId: profile.rtId } }),
+          target: profile.rt.foundingTarget,
+          code: profile.referralCode,
+        }
+      : null;
+
   return (
     <div className="bg-brand-tint">
       {/* ===== TOPBAR ===== */}
@@ -197,7 +208,11 @@ export default async function Beranda() {
           </div>
         </div>
 
+        {/* ===== FOUNDING MEMBER (state pengganti pickup) ===== */}
+        {founding && <FoundingCard count={founding.count} target={founding.target} code={founding.code} />}
+
         {/* ===== RINGKASAN PICKUP ===== */}
+        {!founding && (
         <Card className="overflow-hidden">
           {nextSchedule ? (
             <>
@@ -255,6 +270,7 @@ export default async function Beranda() {
             </div>
           )}
         </Card>
+        )}
 
         {/* ===== AKTIVITAS HARI INI (interaktif: tap untuk catat) ===== */}
         <ActivityCard initial={todayActivity} />

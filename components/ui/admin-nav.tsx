@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Truck, Scale, Recycle, Users, Wallet,
-  BookOpen, FileBarChart, ShieldCheck,
+  BookOpen, FileBarChart, ShieldCheck, UserPlus,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -14,6 +14,7 @@ const NAV: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/admin/waste-records", label: "Timbangan", icon: Scale },
   { href: "/admin/hilir", label: "Hilir & Revenue", icon: Recycle },
   { href: "/admin/users", label: "Warga & Ksatria", icon: Users },
+  { href: "/admin/pengajuan", label: "Pengajuan & Wilayah", icon: UserPlus },
   { href: "/admin/subscriptions", label: "Iuran", icon: Wallet },
   { href: "/admin/content", label: "Konten Edukasi", icon: BookOpen },
   { href: "/admin/reports/esg", label: "Laporan ESG", icon: FileBarChart },

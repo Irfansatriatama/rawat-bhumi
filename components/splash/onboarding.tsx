@@ -48,7 +48,7 @@ export function Onboarding() {
 
   function go() {
     setLoading(true);
-    router.push("/login");
+    router.push("/daftar");
   }
 
   function onTouchStart(e: React.TouchEvent) {
@@ -138,6 +138,9 @@ export function Onboarding() {
             Mulai Sekarang
             {!loading && <ArrowRight size={18} strokeWidth={2.2} />}
           </Button>
+          <button onClick={() => router.push("/login")} className="mt-3 w-full text-center text-sm text-gray-500">
+            Sudah punya akun? <span className="font-semibold text-brand-600">Masuk</span>
+          </button>
         </section>
       </div>
     </main>
