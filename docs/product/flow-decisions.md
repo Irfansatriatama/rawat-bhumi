@@ -97,7 +97,14 @@ Sudah terlanjur dibangun melebihi pilot doc — **diputuskan dipertahankan**, di
   konfirmasi (`POST /api/pickup-requests` + `PickupRequest.readinessScore`). Nudge edukasi bila < siap.
   ⚠️ **Butuh migrasi DB** (kolom baru) — lihat catatan di bawah.
 - [x] **Tracking → tahap status** — hapus peta simulasi/ETA-menit/dot live; ganti status hero jujur.
-- [ ] Sertifikat (generate) · [ ] Onboarding self-serve + OTP dev-mode · [ ] Founding Member.
+- [x] **Sertifikat Dampak** — `lib/certificate.ts` (agregat per periode, tanpa model baru),
+  `/akun/sertifikat` (daftar + empty state) & `/akun/sertifikat/[period]` (kartu printable +
+  Unduh PDF/Bagikan). **Tanpa migrasi.**
+- [ ] **Onboarding self-serve + OTP dev-mode** — *(besar; perlu Better Auth phone plugin + model JoinRequest)*
+- [ ] **Founding Member** — *(perlu RT.isActive/foundingTarget + referral; terkait onboarding)*
+
+> Catatan urutan: Onboarding & Founding **saling terkait** (jadi Founding terjadi saat registrasi tak
+> menemukan komunitas aktif) → dikerjakan sebagai satu unit dengan migrasi tersendiri.
 
 ### ⚠️ Migrasi wajib sebelum deploy
 Kode `Cek Kesiapan` memakai kolom baru `PickupRequest.readinessScore`. **Jalankan dulu** di mesin lokal:
